@@ -1,0 +1,269 @@
+// ===========================================
+// CAFORA - カフェ向けカスタム陶器 EC サイト
+// ===========================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===========================================
+// ユーザー・認証
+// ===========================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  avatarUrl     String?
+  phone         String?
+  role          UserRole  @default(CUSTOMER)
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // リレーション
+  addresses Address[]
+  orders    Order[]
+  cart      Cart?
+  logos     Logo[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  userId     String
+  label      String? // "本店", "2号店" など
+  postalCode String
+  prefecture String
+  city       String
+  line1      String
+  line2      String?
+  phone      String?
+  isDefault  Boolean @default(false)
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@map("addresses")
+}
+
+// ===========================================
+// 商品
+// ===========================================
+
+model Product {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  nameEn      String?
+  description String?
+  basePrice   Int // 税抜き単価（円）
+  category    String // "latte-bowl", "mug", "plate" など
+  isActive    Boolean       @default(true)
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // リレーション
+  images        ProductImage[]
+  colorZones    ColorZone[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  alt       String?
+  sortOrder Int     @default(0)
+  isPrimary Boolean @default(false)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+// ===========================================
+// カラーカスタマイズ
+// ===========================================
+
+// カラーパレット（7色展開）
+model Color {
+  id        String @id @default(cuid())
+  name      String // "テラコッタ", "インディゴ" など
+  nameEn    String?
+  hexCode   String // "#C75B39"
+  sortOrder Int    @default(0)
+  isActive  Boolean @default(true)
+
+  // リレーション
+  customizations CustomizationColor[]
+
+  @@map("colors")
+}
+
+// 色を付けられる箇所（全体・縁・取っ手など）
+model ColorZone {
+  id        String @id @default(cuid())
+  productId String
+  name      String // "全体", "縁", "取っ手"
+  nameEn    String? // "body", "rim", "handle"
+  sortOrder Int    @default(0)
+
+  product        Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customizations CustomizationColor[]
+
+  @@map("color_zones")
+}
+
+// カスタマイズの色選択（ゾーンごとに色を指定）
+model CustomizationColor {
+  id              String @id @default(cuid())
+  customizationId String
+  colorZoneId     String
+  colorId         String
+
+  customization Customization @relation(fields: [customizationId], references: [id], onDelete: Cascade)
+  colorZone     ColorZone     @relation(fields: [colorZoneId], references: [id])
+  color         Color         @relation(fields: [colorId], references: [id])
+
+  @@unique([customizationId, colorZoneId])
+  @@map("customization_colors")
+}
+
+// ===========================================
+// ロゴ
+// ===========================================
+
+model Logo {
+  id             String   @id @default(cuid())
+  userId         String
+  originalUrl    String   // アップロード元画像
+  croppedUrl     String?  // トリミング後
+  fileName       String
+  cropData       Json?    // トリミング座標 {x, y, width, height, rotation}
+  createdAt      DateTime @default(now())
+
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customizations Customization[]
+
+  @@map("logos")
+}
+
+// ===========================================
+// カスタマイズ（色 + ロゴの組み合わせ）
+// ===========================================
+
+model Customization {
+  id        String   @id @default(cuid())
+  logoId    String?
+  previewUrl String? // カスタマイズプレビュー画像
+  createdAt DateTime @default(now())
+
+  // リレーション
+  logo       Logo?                @relation(fields: [logoId], references: [id])
+  colors     CustomizationColor[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@map("customizations")
+}
+
+// ===========================================
+// カート
+// ===========================================
+
+model Cart {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id              String @id @default(cuid())
+  cartId          String
+  productId       String
+  customizationId String
+  quantity        Int    @default(20) // 最低ロット: 20
+
+  cart          Cart          @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+  customization Customization @relation(fields: [customizationId], references: [id])
+
+  @@unique([cartId, productId, customizationId])
+  @@map("cart_items")
+}
+
+// ===========================================
+// 注文
+// ===========================================
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique // "CAFORA-20260301-001"
+  userId          String
+  addressId       String?
+  status          OrderStatus @default(PENDING)
+  subtotal        Int         // 小計（税抜）
+  tax             Int         // 消費税
+  shippingFee     Int         @default(0)
+  total           Int         // 合計
+  receiptName     String      // 領収書宛名（必須）
+  shopifyOrderId  String?     // Shopify連携用
+  note            String?     // 備考
+  paidAt          DateTime?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user    User        @relation(fields: [userId], references: [id])
+  address Address?    @relation(fields: [addressId], references: [id])
+  items   OrderItem[]
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING      // 注文受付
+  CONFIRMED    // 確認済み
+  IN_PRODUCTION // 製造中
+  SHIPPED      // 発送済み
+  DELIVERED    // 配達完了
+  CANCELLED    // キャンセル
+}
+
+model OrderItem {
+  id              String @id @default(cuid())
+  orderId         String
+  productId       String
+  customizationId String
+  quantity        Int
+  unitPrice       Int    // 注文時の単価
+
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id])
+  customization Customization @relation(fields: [customizationId], references: [id])
+
+  @@map("order_items")
+}
