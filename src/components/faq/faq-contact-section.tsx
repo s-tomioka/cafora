@@ -7,6 +7,7 @@ import { FadeUp } from "@/components/ui/scroll-animate";
 const INQUIRY_TYPES = [
   { value: "", label: "選択してください" },
   { value: "order", label: "ご注文・お見積もりについて" },
+  { value: "sample", label: "サンプルの発注" },
   { value: "customize", label: "カスタマイズについて" },
   { value: "delivery", label: "配送・納期について" },
   { value: "development", label: "開発への参加相談" },

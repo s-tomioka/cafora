@@ -5,10 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, Info } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { MIN_ORDER_QUANTITY, formatProductDisplayName } from "@/constants";
+import {
+  MIN_ORDER_QUANTITY,
+  FREE_SHIPPING_QUANTITY,
+  SHIPPING_FEES,
+  alertMinOrderQuantity,
+  getMinOrderQuantityMessage,
+  formatProductDisplayName,
+} from "@/constants";
 import { TwoToneSwatch, getTwoToneSplitForProduct } from "@/components/ui/two-tone-swatch";
 
-const FREE_SHIPPING_THRESHOLD = 100000;
+const SHIPPING_FEE_TOOLTIP_INTRO =
+  "送料は配送エリア・配送数量・配送先数によって異なります。30個（最低納品数）ご注文時の目安送料は以下の通りです。";
 
 // ─── 数量ステッパー ───────────────────────────────────────
 function QuantityStepper({
@@ -27,6 +35,7 @@ function QuantityStepper({
           onClick={() => {
             if (value <= MIN_ORDER_QUANTITY) {
               setQuantityError(true);
+              alertMinOrderQuantity();
             } else {
               setQuantityError(false);
               onChange(value - 1);
@@ -50,6 +59,7 @@ function QuantityStepper({
           }}
           onBlur={() => {
             if (value < MIN_ORDER_QUANTITY) {
+              alertMinOrderQuantity();
               onChange(MIN_ORDER_QUANTITY);
               setQuantityError(false);
             }
@@ -69,7 +79,7 @@ function QuantityStepper({
       </div>
       {quantityError && (
         <p className="mt-2 text-xs text-red-500">
-          最小注文ロット数は{MIN_ORDER_QUANTITY}個になります。
+          {getMinOrderQuantityMessage()}
         </p>
       )}
     </div>
@@ -83,8 +93,10 @@ export function CartView() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 0; // 現在は常に0
-  const total = subtotal + shippingFee;
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  const isShippingFree = totalQuantity >= FREE_SHIPPING_QUANTITY;
+  const shippingFee = isShippingFree ? 0 : null;
+  const total = subtotal + (shippingFee ?? 0);
 
   if (items.length === 0) {
     return (
@@ -251,7 +263,7 @@ export function CartView() {
         <div className="mt-6 flex flex-col items-end gap-2">
           {/* 送料無料ラベル */}
           <p className="rounded-none bg-muted px-3 py-1.5 text-xs text-muted-foreground">
-            ¥{FREE_SHIPPING_THRESHOLD.toLocaleString()}以上で送料無料
+            同一配送先{FREE_SHIPPING_QUANTITY}個以上で送料無料
           </p>
 
           {/* 配送料 */}
@@ -265,18 +277,39 @@ export function CartView() {
                 <Info className="size-3.5" />
               </button>
               {showTooltip && (
-                <div className="absolute bottom-full right-0 mb-2 w-64 border border-border bg-background px-3 py-2.5 text-xs leading-relaxed text-muted-foreground shadow-sm">
-                  一部地域（北海道・沖縄・離島）へのお届けには追加送料が発生する場合がございます。
+                <div className="absolute bottom-full right-0 z-10 mb-2 w-72 border border-border bg-background px-3 py-2.5 text-xs leading-relaxed text-muted-foreground shadow-sm sm:w-80">
+                  <p>{SHIPPING_FEE_TOOLTIP_INTRO}</p>
+                  <table className="mt-2 w-full text-left">
+                    <thead>
+                      <tr className="border-b border-border/60">
+                        <th className="pb-1 pr-2 font-medium text-foreground">配送エリア</th>
+                        <th className="pb-1 text-right font-medium text-foreground">30個</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {SHIPPING_FEES.map((row) => (
+                        <tr key={row.area} className="border-b border-border/40 last:border-0">
+                          <td className="py-1 pr-2">{row.area}</td>
+                          <td className="py-1 text-right tabular-nums">{row.fee}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <p className="mt-2">
+                    同一配送先{FREE_SHIPPING_QUANTITY}個以上で送料無料
+                  </p>
                   <button
                     onClick={() => setShowTooltip(false)}
-                    className="ml-1 underline underline-offset-2"
+                    className="mt-2 underline underline-offset-2"
                   >
                     閉じる
                   </button>
                 </div>
               )}
             </div>
-            <span className="tabular-nums">¥{shippingFee.toLocaleString()}</span>
+            <span className="tabular-nums">
+              {shippingFee === null ? "エリアにより異なります" : `¥${shippingFee.toLocaleString()}`}
+            </span>
           </div>
 
           {/* 合計 */}

@@ -14,7 +14,7 @@ import { AccordionItem } from "@/components/ui/accordion"
 import { CaforaLogo } from "@/components/ui/cafora-logo"
 import { MaterialIcon } from "@/components/ui/material-icon"
 import { FadeIn, FadeUp, StaggerChildren } from "@/components/ui/scroll-animate"
-import { DEFAULT_COLORS } from "@/constants"
+import { DEFAULT_COLORS, MIN_ORDER_QUANTITY, getMinOrderQuantityMessage } from "@/constants"
 import {
   ArrowRight,
   ArrowUp,
@@ -176,7 +176,7 @@ function DemoCheckbox() {
 // 使用箇所: product-detail.tsx / cart-drawer.tsx / cart-view.tsx
 // ─────────────────────────────────────────
 function DemoQuantityStepper() {
-  const [qty, setQty] = useState(20)
+  const [qty, setQty] = useState(MIN_ORDER_QUANTITY)
   return (
     <div className="flex items-center gap-3">
       <button
@@ -246,7 +246,7 @@ function DemoLogoUpload() {
       <input type="file" id="demo-logo-upload" className="sr-only" />
       <Upload className="size-5 text-muted-foreground" />
       <span className="text-sm text-muted-foreground">ロゴデータをアップロード</span>
-      <span className="text-xs text-muted-foreground/70">（PNG, SVG）</span>
+      <span className="text-xs text-muted-foreground/70">（EPS・SVG形式推奨）</span>
     </label>
   )
 }
@@ -281,7 +281,7 @@ function DemoTooltip() {
       </button>
       {show && (
         <div className="absolute bottom-full right-0 z-10 mb-2 w-64 border border-border bg-background px-3 py-2.5 text-xs leading-relaxed text-muted-foreground shadow-sm">
-          一部地域（北海道・沖縄・離島）へのお届けには追加送料が発生する場合がございます。
+          送料は配送エリア・配送数量・配送先数によって異なります。30個（最低納品数）ご注文時の目安送料はよくあるご質問をご確認ください。
           <button onClick={() => setShow(false)} className="ml-1 underline underline-offset-2">
             閉じる
           </button>
@@ -793,7 +793,7 @@ export default function DesignPage() {
         <SectionTitle>07 · Quantity Stepper</SectionTitle>
         {/* 使用箇所: product-detail.tsx・cart-drawer.tsx・cart-view.tsx — インライン実装 */}
         <p className="mb-4 text-xs text-muted-foreground">
-          最小注文ロット制限（MIN_ORDER_QUANTITY = 20）あり。各ファイルにインライン実装（共通コンポーネント化未対応）。
+          最低注文数量制限（MIN_ORDER_QUANTITY = {MIN_ORDER_QUANTITY}）あり。各ファイルにインライン実装（共通コンポーネント化未対応）。
         </p>
         <SubTitle>商品詳細（size-8）</SubTitle>
         <Row>
@@ -805,7 +805,7 @@ export default function DesignPage() {
             <button className="inline-flex size-7 items-center justify-center border border-border transition-colors hover:bg-muted" aria-label="数量を減らす">
               <Minus className="size-3" />
             </button>
-            <input type="number" value={20} readOnly className="w-10 bg-transparent text-center text-sm font-medium [appearance:textfield]" />
+            <input type="number" value={MIN_ORDER_QUANTITY} readOnly className="w-10 bg-transparent text-center text-sm font-medium [appearance:textfield]" />
             <button className="inline-flex size-7 items-center justify-center border border-border transition-colors hover:bg-muted" aria-label="数量を増やす">
               <Plus className="size-3" />
             </button>
@@ -870,7 +870,7 @@ export default function DesignPage() {
         <SectionTitle>09 · Logo Upload</SectionTitle>
         {/* 使用箇所: product-detail.tsx ロゴアップロードエリア */}
         <p className="mb-4 text-xs text-muted-foreground">
-          PNG / SVG 対応。ドロップゾーン表示→ファイル選択後にプレビューへ切り替わる。
+          EPS・SVG形式推奨。ドロップゾーン表示→ファイル選択後にプレビューへ切り替わる。
         </p>
         <Row label="アップロード前（空状態）">
           <div className="w-full max-w-xs">
@@ -947,8 +947,8 @@ export default function DesignPage() {
               </div>
               <div className="mt-6 flex items-end justify-between">
                 <p className="text-lg font-semibold">
-                  ¥2,000
-                  <span className="ml-1 text-xs font-normal text-muted-foreground">税込 / 280ml</span>
+                  ¥1,980〜
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">税込</span>
                 </p>
                 <span className="inline-flex items-center gap-1 text-xs font-medium text-foreground/60">
                   詳しくみる
@@ -1019,8 +1019,8 @@ export default function DesignPage() {
                     <span className="mt-1.5 text-xs underline underline-offset-4">再購入</span>
                   </div>
                 </div>
-                <p className="pt-1 text-center text-sm tabular-nums">20</p>
-                <p className="pt-1 text-right text-sm font-medium tabular-nums">¥40,000</p>
+                <p className="pt-1 text-center text-sm tabular-nums">{MIN_ORDER_QUANTITY}</p>
+                <p className="pt-1 text-right text-sm font-medium tabular-nums">¥60,000</p>
               </div>
             </div>
           </div>
@@ -1067,7 +1067,7 @@ export default function DesignPage() {
         <SubTitle>カートページ 送料サマリー（cart-view.tsx）</SubTitle>
         <div className="mb-6 flex flex-col items-end gap-2 border border-border p-5 max-w-sm">
           <p className="rounded-none bg-muted px-3 py-1.5 text-xs text-muted-foreground">
-            ¥100,000以上で送料無料
+            同一配送先60個以上で送料無料
           </p>
           <div className="flex items-center gap-3 text-sm">
             <DemoTooltip />
@@ -1339,11 +1339,11 @@ export default function DesignPage() {
         </Row>
 
         {/* --- 数量エラー --- */}
-        {/* 使用箇所: product-detail.tsx 最小注文ロット */}
+        {/* 使用箇所: product-detail.tsx 最低注文数量 */}
         <SubTitle>インラインエラー（product-detail.tsx 数量）</SubTitle>
         <Row>
           <p className="text-xs text-red-500">
-            最小注文ロット数は20個になります。
+            {getMinOrderQuantityMessage()}
           </p>
         </Row>
 

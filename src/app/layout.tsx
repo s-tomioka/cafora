@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | CAFORA",
   },
   description:
-    "カフェのための、あなただけの陶器。ロゴ転写・7色カラー展開で、お店独自のブランド食器をお作りします。",
+    "カフェのための、あなただけの陶器。ロゴ転写・6色カラー展開で、お店独自のブランド食器をお作りします。",
   keywords: [
     "カフェ",
     "陶器",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "CAFORA | カフェのための、あなただけの陶器",
     description:
-      "ロゴ転写・7色カラー展開で、お店独自のブランド食器をお作りします。",
+      "ロゴ転写・6色カラー展開で、お店独自のブランド食器をお作りします。",
     type: "website",
     locale: "ja_JP",
     siteName: "CAFORA",
