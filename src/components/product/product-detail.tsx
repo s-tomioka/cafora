@@ -22,9 +22,21 @@ import {
   getProductImageSrc,
   LATTE_BOWL_COLOR_OPTIONS,
   LATTE_BOWL_SIZE_OPTIONS,
+  formatLatteBowlPriceRange,
+  getLatteBowlSizePrice,
   LOGO_SURCHARGE,
   MIN_ORDER_QUANTITY,
+  alertMinOrderQuantity,
+  getMinOrderQuantityMessage,
   formatProductDisplayName,
+  DELIVERY_LEAD_TIME_TEXT,
+  PAYMENT_METHOD_TEXT,
+  PRODUCTION_AREA,
+  DISHWASHER_MICROWAVE_INFO,
+  HANDLING_CAUTION_NOTES,
+  getLatteBowlSizeSpec,
+  LOGO_FORMAT_LABEL,
+  LOGO_ACCEPT_ATTRIBUTE,
   type LatteBowlProductSlug,
 } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
@@ -50,7 +62,6 @@ type Props = {
   slug: string;
   name: string;
   nameEn: string;
-  price: number;
   capacity: string;
   description: string;
   images: string[];
@@ -64,8 +75,6 @@ type Props = {
   otherNameEn: string;
   otherTagline: string;
   otherDescription: string;
-  otherPrice: number;
-  otherCapacity: string;
   otherImage: string;
 };
 
@@ -424,7 +433,6 @@ export function ProductDetail({
   slug,
   name,
   nameEn,
-  price,
   capacity,
   images,
   featureImages,
@@ -437,8 +445,6 @@ export function ProductDetail({
   otherNameEn,
   otherTagline,
   otherDescription,
-  otherPrice,
-  otherCapacity,
   otherImage,
 }: Props) {
   const { addItem } = useCart();
@@ -458,6 +464,14 @@ export function ProductDetail({
 
   // Customization state
   const [selectedSize, setSelectedSize] = useState(defaultSize);
+  const selectedSizePrice = getLatteBowlSizePrice(
+    slug as LatteBowlProductSlug,
+    selectedSize,
+  );
+  const sizeSpec = getLatteBowlSizeSpec(
+    slug as LatteBowlProductSlug,
+    selectedSize,
+  );
   const [selectedColorOption, setSelectedColorOption] = useState<string>(
     LATTE_BOWL_COLOR_OPTIONS[0].nameEn,
   );
@@ -541,6 +555,12 @@ export function ProductDetail({
 
   // カートに追加（useCallback を外して常に最新 state を参照）
   const handleAddToCart = () => {
+    if (quantity < MIN_ORDER_QUANTITY) {
+      setQuantityError(true);
+      alertMinOrderQuantity();
+      return;
+    }
+
     const colorOptionData =
       LATTE_BOWL_COLOR_OPTIONS.find(
         (option) => option.nameEn === selectedColorOption,
@@ -552,9 +572,9 @@ export function ProductDetail({
       image: getLatteBowlColorDetailImagePath(slug, selectedColorOption),
       name,
       capacity: selectedSize,
-      baseUnitPrice: price,
+      baseUnitPrice: selectedSizePrice,
       logoUnitPrice,
-      unitPrice: price + logoUnitPrice,
+      unitPrice: selectedSizePrice + logoUnitPrice,
       quantity,
       colorOption: {
         name: colorOptionData.name,
@@ -584,6 +604,10 @@ export function ProductDetail({
       setLogoPanX((viewportW - size.width * displayScale) / 2);
       setLogoPanY((viewportH - size.height * displayScale) / 2);
       setIsLogoCropOpen(true);
+    } catch {
+      window.alert(
+        "このファイル形式はプレビューできません。EPS・SVG形式推奨です。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。",
+      );
     } finally {
       e.target.value = "";
     }
@@ -824,9 +848,9 @@ export function ProductDetail({
               {formatProductDisplayName(name)}
             </h1>
             <p className="mt-2 text-base font-semibold sm:text-lg">
-              &yen;{price.toLocaleString()}
+              &yen;{selectedSizePrice.toLocaleString()}
               <span className="ml-1 text-xs font-normal text-muted-foreground">
-                税込
+                税込 / {selectedSize}
               </span>
             </p>
 
@@ -838,6 +862,7 @@ export function ProductDetail({
                   onClick={() => {
                     if (quantity <= MIN_ORDER_QUANTITY) {
                       setQuantityError(true);
+                      alertMinOrderQuantity();
                     } else {
                       setQuantityError(false);
                       setQuantity((q) => q - 1);
@@ -861,6 +886,7 @@ export function ProductDetail({
                   }}
                   onBlur={() => {
                     if (quantity < MIN_ORDER_QUANTITY) {
+                      alertMinOrderQuantity();
                       setQuantity(MIN_ORDER_QUANTITY);
                       setQuantityError(false);
                     }
@@ -880,7 +906,7 @@ export function ProductDetail({
               </div>
               {quantityError && (
                 <p className="mt-2 text-xs text-red-500">
-                  最小注文ロット数は{MIN_ORDER_QUANTITY}個になります。
+                  {getMinOrderQuantityMessage()}
                 </p>
               )}
             </div>
@@ -936,7 +962,7 @@ export function ProductDetail({
                     className="sr-only"
                   />
                   <span className="text-sm text-muted-foreground">
-                    ロゴをつける（+&yen;{LOGO_SURCHARGE.toLocaleString()} / 個）
+                    ロゴをつける（+￥{LOGO_SURCHARGE.toLocaleString()} / 個）
                   </span>
                 </label>
 
@@ -945,7 +971,7 @@ export function ProductDetail({
                     <input
                       ref={logoInputRef}
                       type="file"
-                      accept=".png,.svg,image/png,image/svg+xml"
+                      accept={LOGO_ACCEPT_ATTRIBUTE}
                       onChange={handleLogoChange}
                       className="sr-only"
                       id="logo-upload"
@@ -976,7 +1002,7 @@ export function ProductDetail({
                             ロゴデータをアップロード
                           </span>
                           <span className="text-xs text-muted-foreground/70">
-                            （PNG, SVG）
+                            （{LOGO_FORMAT_LABEL}）
                           </span>
                         </>
                       )}
@@ -1057,30 +1083,44 @@ export function ProductDetail({
             <div className="mt-4 divide-y divide-border">
               <AccordionItem title="サイズ、素材、生産地、製造方法">
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>サイズ：直径約10cm × 高さ約8cm</li>
-                  <li>容量：{selectedSize}</li>
+                  {sizeSpec && <li>商品名：{sizeSpec.productName}</li>}
+                  <li>
+                    サイズ：
+                    {sizeSpec?.dimensions ?? "直径約10cm × 高さ約8cm"}
+                  </li>
+                  <li>容量：{sizeSpec?.capacity ?? selectedSize}</li>
                   <li>素材：磁器</li>
-                  <li>生産地：日本（美濃焼）</li>
+                  <li>
+                    生産地：日本（
+                    {sizeSpec?.productionArea ?? PRODUCTION_AREA}）
+                  </li>
                   <li>製造方法：鋳込み成形</li>
                 </ul>
               </AccordionItem>
 
               <AccordionItem title="食洗機・電子レンジの使用について">
-                <p className="text-sm text-muted-foreground">
-                  食洗機、電子レンジともにご使用いただけます。業務用食洗機にも対応しています。
-                </p>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  {DISHWASHER_MICROWAVE_INFO.map((text) => (
+                    <p key={text}>{text}</p>
+                  ))}
+                </div>
               </AccordionItem>
 
-              <AccordionItem title="お届け日、お支払い方法">
-                <p className="text-sm text-muted-foreground">
-                  ご注文確定後、約4週間でお届けいたします。お支払いはクレジットカードのみとなります。
-                </p>
+              <AccordionItem title="お届け日・お支払い方法">
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p>{DELIVERY_LEAD_TIME_TEXT.basic}</p>
+                  <p>{DELIVERY_LEAD_TIME_TEXT.withLogo}</p>
+                  <p>{DELIVERY_LEAD_TIME_TEXT.note}</p>
+                  <p>{PAYMENT_METHOD_TEXT}</p>
+                </div>
               </AccordionItem>
 
               <AccordionItem title="取扱い上の注意">
-                <p className="text-sm text-muted-foreground">
-                  急激な温度変化は避けてください。ヒビや欠けが生じた場合はご使用を中止してください。
-                </p>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  {HANDLING_CAUTION_NOTES.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
               </AccordionItem>
             </div>
           </FadeUp>
@@ -1126,9 +1166,9 @@ export function ProductDetail({
                   </div>
                   <div className="mt-6 flex items-end justify-between">
                     <p className="text-lg font-semibold">
-                      &yen;{otherPrice.toLocaleString()}
+                      &yen;{formatLatteBowlPriceRange(otherSlug as LatteBowlProductSlug)}
                       <span className="ml-1 text-xs font-normal text-muted-foreground">
-                        税込 / {otherCapacity}
+                        税込
                       </span>
                     </p>
                     <span className="inline-flex items-center gap-1 text-xs font-medium text-foreground/60 transition-colors group-hover:text-foreground">
@@ -1219,7 +1259,7 @@ export function ProductDetail({
             </div>
 
             <p className="text-center text-xs leading-relaxed text-muted-foreground">
-              透過PNGとSVGに対応しています。
+              {LOGO_FORMAT_LABEL}。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。
             </p>
           </div>
 

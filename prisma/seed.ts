@@ -4,13 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import pg from "pg";
 
 const DEFAULT_COLORS = [
-  { name: "ホワイト", nameEn: "White", hexCode: "#F5F5F0" },
+  { name: "グレー", nameEn: "Gray", hexCode: "#A89A8F" },
   { name: "チャコール", nameEn: "Charcoal", hexCode: "#3A3A3A" },
-  { name: "テラコッタ", nameEn: "Terracotta", hexCode: "#C75B39" },
-  { name: "インディゴ", nameEn: "Indigo", hexCode: "#2C4A7C" },
-  { name: "セージ", nameEn: "Sage", hexCode: "#7D8B6E" },
-  { name: "サンド", nameEn: "Sand", hexCode: "#C4AD8F" },
   { name: "モカ", nameEn: "Mocha", hexCode: "#6B4E3D" },
+  { name: "モスグリーン", nameEn: "MossGreen", hexCode: "#8C8660" },
+  { name: "ブルーグレー", nameEn: "BlueGray", hexCode: "#6B7683" },
+  { name: "テラコッタ", nameEn: "Terracotta", hexCode: "#C75B39" },
 ] as const;
 
 const LATTE_BOWL_ZONES = [
@@ -57,7 +56,7 @@ async function main() {
       name: "ラテボウル",
       nameEn: "Latte Bowl",
       description:
-        "カフェラテやスープにぴったりの大きめボウル。ロゴ転写と7色のカラーカスタマイズで、お店のオリジナルアイテムに。",
+        "カフェラテやスープにぴったりの大きめボウル。ロゴ転写と6色のカラーカスタマイズで、お店のオリジナルアイテムに。",
       basePrice: 2800,
       category: "latte-bowl",
       isActive: true,

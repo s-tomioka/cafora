@@ -7,7 +7,7 @@ import { HeroCarousel } from "@/components/top/hero-carousel";
 import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
 import { InstagramSection } from "@/components/sections/instagram-section";
 import { AccordionItem } from "@/components/ui/accordion";
-import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName } from "@/constants";
+import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName, formatLatteBowlPriceRange } from "@/constants";
 function SplitButton({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -30,8 +30,6 @@ const PRODUCTS = [
     tagline: "両手で包む、冬のひととき",
     description:
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
-    price: 2000,
-    capacity: "280ml",
     image: "/images/home/latte-bowl-on.png",
   },
   {
@@ -41,8 +39,6 @@ const PRODUCTS = [
     tagline: "見惚れて、味わう",
     description:
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
-    price: 2000,
-    capacity: "280ml",
     image: "/images/home/latte-bowl-kaku.png",
   },
 ] as const;
@@ -100,7 +96,7 @@ function ProductsSection() {
 
                 <div className="mt-6 flex items-end justify-between">
                   <p className="text-lg font-semibold">
-                    &yen;{product.price.toLocaleString()}
+                    &yen;{formatLatteBowlPriceRange(product.slug)}
                     <span className="ml-1 text-xs font-normal text-muted-foreground">
                       税込
                     </span>
@@ -283,20 +279,24 @@ function StorySection() {
 // ==========================================
 const FAQS = [
   {
-    question: "発注してからどのくらいで届きますか？",
-    answer: "通常、ご注文確定後約4週間でお届けいたします。繁忙期には多少お時間をいただく場合がございます。",
+    question: "注文から納品まで、どのくらいかかりますか？",
+    answer:
+      "基本仕様の商品は、ご注文確定後おおよそ4週間を目安としています。ロゴ転写のカスタマイズを含む場合は、仕様確定後おおよそ5~6週間を目安としています。",
   },
   {
-    question: "最小発注数はいくつですか？",
-    answer: "1デザインにつき20個からご注文いただけます。",
+    question: "最低注文数量はありますか？",
+    answer:
+      "はい、CAFORAの器は業務用途を想定した受注生産のため、最低注文数量は30個からとなっています。",
   },
   {
     question: "ロゴの入稿データはどのような形式に対応していますか？",
-    answer: "PNG、JPEG、SVG形式に対応しております。より鮮明な仕上がりのため、高解像度のデータをお勧めします。",
+    answer:
+      "EPS・SVG形式を推奨しています。指定形式のファイルでアップロードができない場合でも、お気軽にお問合せください。",
   },
   {
     question: "食洗機や電子レンジは使用できますか？",
-    answer: "はい、すべての商品が食洗機・電子レンジ対応です。業務用食洗機にも対応しています。",
+    answer:
+      "食洗機・電子レンジともにご使用いただけます。業務用食洗機にも対応しています。ロゴ転写ありの商品も使用可能ですが、長くきれいにお使いいただくため、転写部分を強くこすらないようご注意ください。",
   },
 ];
 
