@@ -1,6 +1,10 @@
 "use client";
 
-import type { LatteBowlColorOption, LatteBowlProductSlug } from "@/constants";
+import {
+  IS_PRE_OPEN,
+  type LatteBowlColorOption,
+  type LatteBowlProductSlug,
+} from "@/constants";
 import {
   createContext,
   useContext,
@@ -61,6 +65,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const addItem = useCallback((newItem: Omit<CartItem, "id">) => {
+    if (IS_PRE_OPEN) return;
     const id = `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     setItems((prev) => [...prev, { ...newItem, id }]);
     setIsDrawerOpen(true);
@@ -76,7 +81,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }, []);
 
-  const openDrawer = useCallback(() => setIsDrawerOpen(true), []);
+  const openDrawer = useCallback(() => {
+    if (IS_PRE_OPEN) return;
+    setIsDrawerOpen(true);
+  }, []);
   const closeDrawer = useCallback(() => setIsDrawerOpen(false), []);
 
   // 後方互換（cart-view.tsx 等が呼ぶ）

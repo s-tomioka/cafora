@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ShoppingBag, User } from "lucide-react";
 import { CaforaLogo } from "@/components/ui/cafora-logo";
+import { IS_PRE_OPEN, PRE_OPEN_SALE_LABEL } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
 
 const NAV_ITEMS = [
@@ -114,14 +115,16 @@ export function Header() {
               <User className="size-4" />
               アカウント
             </Link>
-            <Link
-              href="/cart"
-              className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-              onClick={closeMenu}
-            >
-              <ShoppingBag className="size-4" />
-              カート
-            </Link>
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/cart"
+                className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+                onClick={closeMenu}
+              >
+                <ShoppingBag className="size-4" />
+                カート
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -130,7 +133,13 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 w-full">
+        {IS_PRE_OPEN && (
+          <div className="bg-[#333333] py-2 text-center text-[14px] text-white">
+            {PRE_OPEN_SALE_LABEL}
+          </div>
+        )}
+        <header className="w-full bg-background/95 backdrop-blur-sm">
         <div className="container-cafora flex h-14 items-center sm:h-16">
           {/* Mobile: Hamburger — flex-1 でロゴを中央に */}
           <div className="flex flex-1 lg:hidden">
@@ -176,19 +185,22 @@ export function Header() {
             >
               <User className="size-5" />
             </Link>
-            <Link
-              href="/cart"
-              className="relative inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="カート"
-            >
-              <ShoppingBag className="size-5" />
-              {itemCount > 0 && (
-                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500" />
-              )}
-            </Link>
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/cart"
+                className="relative inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="カート"
+              >
+                <ShoppingBag className="size-5" />
+                {itemCount > 0 && (
+                  <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500" />
+                )}
+              </Link>
+            )}
           </div>
         </div>
-      </header>
+        </header>
+      </div>
 
       {/* Portal: headerのstacking contextの外にレンダリング */}
       {mounted && createPortal(mobileMenu, document.body)}

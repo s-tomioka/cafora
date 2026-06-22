@@ -20,10 +20,12 @@ import {
   getLatteBowlColorDetailImagePath,
   getLatteBowlGalleryImagePath,
   getProductImageSrc,
+  IS_PRE_OPEN,
   LATTE_BOWL_COLOR_OPTIONS,
   LATTE_BOWL_SIZE_OPTIONS,
   LOGO_SURCHARGE,
   MIN_ORDER_QUANTITY,
+  PRE_OPEN_SALE_LABEL,
   formatProductDisplayName,
   type LatteBowlProductSlug,
 } from "@/constants";
@@ -991,10 +993,11 @@ export function ProductDetail({
 
             {/* Add to Cart */}
             <Button
-              className="mt-6 h-auto w-full rounded-none py-4 text-sm font-medium transition-all duration-300 ease-in-out hover:opacity-50"
+              className="mt-6 h-auto w-full rounded-none py-4 text-sm font-medium transition-all duration-300 ease-in-out hover:opacity-50 disabled:hover:opacity-50"
+              disabled={IS_PRE_OPEN}
               onClick={handleAddToCart}
             >
-              カートに追加
+              {IS_PRE_OPEN ? PRE_OPEN_SALE_LABEL : "カートに追加"}
             </Button>
           </FadeUp>
         </div>
