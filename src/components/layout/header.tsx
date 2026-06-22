@@ -12,7 +12,8 @@ const NAV_ITEMS = [
   { href: "/products", label: "商品を探す" },
   { href: "/barista", label: "WITH BARISTAS" },
   { href: "/brand", label: "CAFORAについて" },
-  { href: "/journal", label: "ジャーナル" },
+  // プレオープン中は非表示（ジャーナル準備中）
+  // { href: "/journal", label: "ジャーナル" },
   { href: "/faq", label: "よくあるご質問・お問合せ" },
 ] as const;
 

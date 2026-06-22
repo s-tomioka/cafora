@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HeroCarousel } from "@/components/top/hero-carousel";
 import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
-import { InstagramSection } from "@/components/sections/instagram-section";
+// プレオープン中は非表示（Instagram 準備中）
+// import { InstagramSection } from "@/components/sections/instagram-section";
 import { AccordionItem } from "@/components/ui/accordion";
 import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName } from "@/constants";
 function SplitButton({ href, children }: { href: string; children: React.ReactNode }) {
@@ -144,6 +145,8 @@ const BLOG_POSTS = [
   },
 ] as const;
 
+// プレオープン中は呼び出し箇所をコメントアウト（ジャーナル準備中）。準備完了後に復活させる。
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function BlogSection() {
   return (
     <section className="pt-16 sm:pt-24">
@@ -339,8 +342,9 @@ export default function HomePage() {
       <HeroCarousel />
       <ProductsSection />
       <BaristaSection />
-      <BlogSection />
-      <InstagramSection />
+      {/* プレオープン中は非表示（ジャーナル / Instagram 準備中） */}
+      {/* <BlogSection /> */}
+      {/* <InstagramSection /> */}
       <StorySection />
       <FAQSection />
     </>
