@@ -1,26 +1,25 @@
 type ReorderProductSlug = "on" | "kaku";
 
+const REORDER_LOGO_STORAGE_KEY = "cafora_reorder_logo";
+
 type ReorderOptions = {
   colorNameEn: string;
   capacity: string;
   hasLogo: boolean;
 };
 
-const REORDER_LOGO_STORAGE_KEY = "cafora_reorder_logo";
-
 export function buildReorderHref(
   slug: ReorderProductSlug,
-  options: ReorderOptions,
+  { colorNameEn, capacity, hasLogo }: ReorderOptions,
 ): string {
   const params = new URLSearchParams();
 
-  params.set("color", options.colorNameEn);
-  params.set("size", options.capacity);
+  params.set("color", colorNameEn);
+  params.set("size", capacity);
 
-  if (options.hasLogo) {
+  if (hasLogo) {
     params.set("logo", "1");
   }
-
   return `/products/${slug}?${params.toString()}`;
 }
 

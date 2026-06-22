@@ -6,6 +6,10 @@ export const SITE_NAME = "CAFORA";
 export const SITE_DESCRIPTION =
   "カフェのための、あなただけの陶器。ロゴ転写・7色カラー展開で、お店独自のブランド食器をお作りします。";
 
+/** プレオープン期間中は true。正式販売開始時に false に切り替える。 */
+export const IS_PRE_OPEN = true;
+export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
+
 export const MIN_ORDER_QUANTITY = 20;
 export const TAX_RATE = 0.1; // 消費税 10%
 export const LOGO_SURCHARGE = 500;

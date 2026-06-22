@@ -5,6 +5,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/contexts/cart-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { IS_PRE_OPEN } from "@/constants";
 
 const notoSerifJP = Noto_Serif_JP({
   variable: "--font-sans",
@@ -57,7 +58,7 @@ export default function RootLayout({
         <CartProvider>
           <ScrollToTop />
           {children}
-          <CartDrawer />
+          {!IS_PRE_OPEN && <CartDrawer />}
           <Toaster position="top-right" />
         </CartProvider>
       </body>
