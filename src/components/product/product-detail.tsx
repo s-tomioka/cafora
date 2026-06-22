@@ -20,6 +20,7 @@ import {
   getLatteBowlColorDetailImagePath,
   getLatteBowlGalleryImagePath,
   getProductImageSrc,
+  IS_LOGO_UPLOAD_ENABLED,
   IS_PRE_OPEN,
   LATTE_BOWL_COLOR_OPTIONS,
   LATTE_BOWL_SIZE_OPTIONS,
@@ -912,81 +913,90 @@ export function ProductDetail({
 
               {/* ロゴ */}
               <div>
-                <p className="mb-3 text-sm font-medium">ロゴ</p>
-                <label className="flex cursor-pointer items-center gap-2">
-                  <span
-                    className={`inline-flex size-4 shrink-0 items-center justify-center border transition-colors ${
-                      hasLogo
-                        ? "border-foreground bg-foreground"
-                        : "border-border bg-background"
-                    }`}
-                  >
-                    {hasLogo && <Check className="size-2.5 text-background" />}
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={hasLogo}
-                    onChange={(e) => {
-                      setHasLogo(e.target.checked);
-                      if (!e.target.checked) {
-                        setLogoPreviewUrl(null);
-                        setLogoSourceUrl(null);
-                        setLogoImageSize(null);
-                        setIsLogoCropOpen(false);
-                      }
-                    }}
-                    className="sr-only"
-                  />
-                  <span className="text-sm text-muted-foreground">
-                    ロゴをつける（+&yen;{LOGO_SURCHARGE.toLocaleString()} / 個）
-                  </span>
-                </label>
-
-                {hasLogo && (
-                  <div className="mt-3">
-                    <input
-                      ref={logoInputRef}
-                      type="file"
-                      accept=".png,.svg,image/png,image/svg+xml"
-                      onChange={handleLogoChange}
-                      className="sr-only"
-                      id="logo-upload"
-                    />
-                    <label
-                      htmlFor="logo-upload"
-                      className="flex min-h-[96px] cursor-pointer flex-col items-center justify-center gap-1.5 border border-dashed border-border bg-muted/30 px-4 py-6 text-center transition-colors hover:bg-muted/60"
-                    >
-                      {logoPreviewUrl ? (
-                        <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={logoPreviewUrl}
-                            alt="アップロードされたロゴ"
-                            className="max-h-12 max-w-[120px] object-contain"
-                          />
-                          <span className="mt-1 text-xs text-muted-foreground">
-                            クリックして変更
-                          </span>
-                          <span className="text-[11px] text-muted-foreground/70">
-                            アップロード後に正方形トリミングを調整できます
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="size-5 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">
-                            ロゴデータをアップロード
-                          </span>
-                          <span className="text-xs text-muted-foreground/70">
-                            （PNG, SVG）
-                          </span>
-                        </>
-                      )}
+                {IS_LOGO_UPLOAD_ENABLED ? (
+                  <>
+                    <p className="mb-3 text-sm font-medium">ロゴ</p>
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <span
+                        className={`inline-flex size-4 shrink-0 items-center justify-center border transition-colors ${
+                          hasLogo
+                            ? "border-foreground bg-foreground"
+                            : "border-border bg-background"
+                        }`}
+                      >
+                        {hasLogo && <Check className="size-2.5 text-background" />}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={hasLogo}
+                        onChange={(e) => {
+                          setHasLogo(e.target.checked);
+                          if (!e.target.checked) {
+                            setLogoPreviewUrl(null);
+                            setLogoSourceUrl(null);
+                            setLogoImageSize(null);
+                            setIsLogoCropOpen(false);
+                          }
+                        }}
+                        className="sr-only"
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        ロゴをつける（+&yen;{LOGO_SURCHARGE.toLocaleString()} / 個）
+                      </span>
                     </label>
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
-                    </p>
-                  </div>
+
+                    {hasLogo && (
+                      <div className="mt-3">
+                        <input
+                          ref={logoInputRef}
+                          type="file"
+                          accept=".png,.svg,image/png,image/svg+xml"
+                          onChange={handleLogoChange}
+                          className="sr-only"
+                          id="logo-upload"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="flex min-h-[96px] cursor-pointer flex-col items-center justify-center gap-1.5 border border-dashed border-border bg-muted/30 px-4 py-6 text-center transition-colors hover:bg-muted/60"
+                        >
+                          {logoPreviewUrl ? (
+                            <>
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={logoPreviewUrl}
+                                alt="アップロードされたロゴ"
+                                className="max-h-12 max-w-[120px] object-contain"
+                              />
+                              <span className="mt-1 text-xs text-muted-foreground">
+                                クリックして変更
+                              </span>
+                              <span className="text-[11px] text-muted-foreground/70">
+                                アップロード後に正方形トリミングを調整できます
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="size-5 text-muted-foreground" />
+                              <span className="text-sm text-muted-foreground">
+                                ロゴデータをアップロード
+                              </span>
+                              <span className="text-xs text-muted-foreground/70">
+                                （PNG, SVG）
+                              </span>
+                            </>
+                          )}
+                        </label>
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                          ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
+                        </p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  /* 初回ローンチ時はアップロード機能を無効化し、静的テキストのみ表示 */
+                  <p className="text-sm text-muted-foreground">
+                    ロゴをつける（+&yen;{LOGO_SURCHARGE.toLocaleString()} / 個）
+                  </p>
                 )}
               </div>
             </div>
