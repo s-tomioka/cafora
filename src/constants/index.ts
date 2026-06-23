@@ -21,6 +21,17 @@ export const MIN_ORDER_QUANTITY = 30;
 export const TAX_RATE = 0.1; // 消費税 10%
 export const LOGO_SURCHARGE = 500;
 
+export function getMinOrderQuantityMessage(): string {
+  return `最低注文数量は${MIN_ORDER_QUANTITY}個からとなります。`;
+}
+
+export function alertMinOrderQuantity(): void {
+  window.alert(getMinOrderQuantityMessage());
+}
+
+/** 送料無料となる注文数量の目安 */
+export const FREE_SHIPPING_QUANTITY = 60;
+
 // 送料（佐川急便・30個＝最低納品数ご注文時の目安）
 export const SHIPPING_FEES = [
   { area: "東海（愛知・岐阜・静岡・三重）", fee: "¥4,880" },
@@ -29,6 +40,35 @@ export const SHIPPING_FEES = [
   { area: "北海道", fee: "¥6,180" },
   { area: "沖縄", fee: "¥7,500" },
 ] as const;
+
+// 商品スペック・取扱い文言
+export const DELIVERY_LEAD_TIME_TEXT = {
+  basic: "基本仕様の商品は、ご注文確定後おおよそ4週間を目安としています。",
+  withLogo:
+    "ロゴ転写のカスタマイズを含む場合は、仕様確定後おおよそ5~6週間を目安としています。",
+  note: "数量や仕様によってはさらにお時間をいただく場合があります。開業や導入時期が決まっている場合は、お早めにご相談ください。",
+} as const;
+
+export const PAYMENT_METHOD_TEXT =
+  "原則としてクレジットカード決済に対応しています。銀行振込をご希望の場合は、事前にお問い合わせフォームよりご相談ください。";
+
+export const DISHWASHER_MICROWAVE_INFO = [
+  "食洗機・電子レンジともにご使用いただけます。業務用食洗機にも対応しています。",
+  "ロゴ転写ありの商品もご使用いただけますが、長くきれいにお使いいただくため、転写部分を強くこすらないようご注意ください。",
+] as const;
+
+export const HANDLING_CAUTION_NOTES = [
+  "急激な温度変化は避けてください。",
+  "ヒビや欠けが生じた場合はご使用を中止してください。",
+  "磁器製品の特性上、色味や質感にわずかな個体差が生じる場合があります。",
+] as const;
+
+export const PRODUCTION_AREA = "瀬戸・美濃焼";
+
+export const LOGO_FORMAT_LABEL = "EPS・SVG形式推奨";
+
+export const LOGO_ACCEPT_ATTRIBUTE =
+  ".eps,.svg,image/svg+xml,application/postscript,application/illustrator,application/eps,application/x-eps";
 
 export const LATTE_BOWL_PRODUCTS = {
   on: {
@@ -106,7 +146,81 @@ export const LATTE_BOWL_SIZE_OPTIONS = {
   kaku: ["240ml", "280ml"],
 } as const;
 
+export const LATTE_BOWL_SIZE_PRICES = {
+  on: {
+    "180ml": 1980,
+    "240ml": 2200,
+  },
+  kaku: {
+    "240ml": 2420,
+    "280ml": 2620,
+  },
+} as const;
+
 export type LatteBowlProductSlug = keyof typeof LATTE_BOWL_SIZE_OPTIONS;
+
+export type LatteBowlSizeSpec = {
+  productName: string;
+  dimensions: string;
+  capacity: string;
+  productionArea: string;
+};
+
+export const LATTE_BOWL_SIZE_SPECS: Partial<
+  Record<LatteBowlProductSlug, Partial<Record<string, LatteBowlSizeSpec>>>
+> = {
+  on: {
+    "180ml": {
+      productName: "ON 180ml",
+      dimensions: "直径約8cm × 高さ約6.5cm",
+      capacity: "180ml",
+      productionArea: "瀬戸・美濃焼",
+    },
+    "240ml": {
+      productName: "ON 240ml",
+      dimensions: "直径約9cm × 高さ約7.5cm",
+      capacity: "240ml",
+      productionArea: "瀬戸・美濃焼",
+    },
+  },
+  kaku: {
+    "240ml": {
+      productName: "KAKU 240ml",
+      dimensions: "直径約10cm × 高さ約5cm",
+      capacity: "240ml",
+      productionArea: "瀬戸・美濃焼",
+    },
+    "280ml": {
+      productName: "KAKU 280ml",
+      dimensions: "直径約10.5cm × 高さ約5.5cm",
+      capacity: "280ml",
+      productionArea: "瀬戸・美濃焼",
+    },
+  },
+};
+
+export function getLatteBowlSizeSpec(
+  slug: LatteBowlProductSlug,
+  size: string,
+): LatteBowlSizeSpec | null {
+  return LATTE_BOWL_SIZE_SPECS[slug]?.[size] ?? null;
+}
+
+export function getLatteBowlSizePrice(
+  slug: LatteBowlProductSlug,
+  size: string,
+): number {
+  const prices = LATTE_BOWL_SIZE_PRICES[slug] as Record<string, number>;
+  return prices[size] ?? Object.values(prices)[0];
+}
+
+export function formatLatteBowlPriceRange(slug: LatteBowlProductSlug): string {
+  const prices = Object.values(LATTE_BOWL_SIZE_PRICES[slug]);
+  const min = Math.min(...prices);
+  const max = Math.max(...prices);
+  if (min === max) return min.toLocaleString();
+  return `${min.toLocaleString()}〜`;
+}
 
 export function getLatteBowlColorDetailImagePath(
   slug: string,
@@ -144,10 +258,13 @@ export const LATTE_BOWL_ZONES = [
 // 画像アップロード制限
 export const LOGO_MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const LOGO_ACCEPTED_TYPES = [
-  "image/png",
-  "image/jpeg",
   "image/svg+xml",
+  "application/postscript",
+  "application/illustrator",
+  "application/eps",
+  "application/x-eps",
 ] as const;
 
 // リードタイム
-export const ESTIMATED_LEAD_TIME_WEEKS = 4;
+/** @deprecated DELIVERY_LEAD_TIME_TEXT を使用してください */
+export const ESTIMATED_LEAD_TIME_WEEKS = 2;
