@@ -58,7 +58,7 @@ const MOCK_ORDERS: Order[] = [
     items: [
       {
         slug: "on",
-        image: "/images/product/latte-bowl-on.png",
+        image: "/images/product/latte-bowl-on.webp",
         product: "温（ON）",
         capacity: "240ml",
         baseUnitPrice: 2000,
@@ -70,7 +70,7 @@ const MOCK_ORDERS: Order[] = [
       },
       {
         slug: "kaku",
-        image: "/images/product/latte-bowl-kaku.png",
+        image: "/images/product/latte-bowl-kaku.webp",
         product: "拡（KAKU）",
         capacity: "280ml",
         baseUnitPrice: 2000,
@@ -91,7 +91,7 @@ const MOCK_ORDERS: Order[] = [
     items: [
       {
         slug: "on",
-        image: "/images/product/latte-bowl-on.png",
+        image: "/images/product/latte-bowl-on.webp",
         product: "温（ON）",
         capacity: "240ml",
         baseUnitPrice: 2000,

@@ -43,67 +43,67 @@ const CHAPTERS: ChapterBlock[] = [
     id: "chapter-01",
     chapterLabel: "Chapter 01",
     title: "器は、体験をつくる",
-    heroImage: "/images/About/brand-hero-01.png",
+    heroImage: "/images/About/brand-hero-01.webp",
     english:
       "CAFORA is not a tableware brand. It is a brand that designs the entire café experience, starting from the vessel. The temperature of the drink, how it feels on the lips, the weight in the hand. All of these shape how flavor is perceived. Even the same cup can feel different with a different vessel—how you feel it and its aftertaste really change. That difference is slight, yet it becomes a large gap as an experience. CAFORA aims to design that difference, and to make every cup’s moment a little better.",
     japanese:
       "CAFORAは、器をつくるブランドではありません。器を起点に、カフェという体験そのものを設計するブランドです。飲み物の温度、口に触れる感触、手に持ったときの重み。それらはすべて、味わいの印象をかたちづくる要素です。同じ一杯でも、器が変われば、感じ方や余韻は確かに変わっていく。その違いはわずかでありながら、体験としては大きな差になる。CAFORAは、その差を設計することで、一杯の時間そのものをより良くすることを目指しています。",
     imageLayout: "single",
-    images: [{ src: "/images/About/brand-content-01.png", alt: "器は、体験をつくる" }],
+    images: [{ src: "/images/About/brand-content-01.webp", alt: "器は、体験をつくる" }],
   },
   {
     id: "chapter-02",
     chapterLabel: "Chapter 02",
     title: "器は、舞台である",
-    heroImage: "/images/About/brand-hero-02.png",
+    heroImage: "/images/About/brand-hero-02.webp",
     english:
       "If food and drink are the lead, we believe the vessel should be the stage that supports them. That stage affects not only appearance but how the whole experience is felt. Rim thickness alone changes how the lips meet the cup and shifts the impression of milk’s smoothness and cream. The inner curve and angle change how liquid moves—its speed and spread as it reaches the mouth. The opening’s width and shape guide how aroma rises and is perceived. Each is a small difference, yet together they reliably change the impression of a single cup. A vessel is not merely a holder—it exists to design how flavor is felt. Through such details, CAFORA supports the lead and refines the experience itself.",
     japanese:
       "料理や飲み物が主役であるならば、器はそれを支える舞台であるべきだと、私たちは考えています。その舞台は、見た目だけでなく、体験の感じ方そのものに影響します。例えば、飲み口の厚み。わずかに薄くするだけで、唇に触れたときの感触が変わり、ミルクのなめらかさやクリーム感の印象が大きく変わります。また、器の内側のカーブや角度は、液体の流れ方を変え、口に入るスピードや広がり方に影響します。さらに、開口部の広さや形状は、香りの立ち上がり方や感じ方を左右します。これらはすべて、わずかな違いでありながら、一杯の印象を確実に変えていく要素です。器は、ただ料理や飲み物を載せるためのものではなく、味わいの感じ方を設計するための存在です。CAFORAは、こうした細部の設計を通じて、主役を引き立てながら、体験そのものを整えています。",
     imageLayout: "double",
     images: [
-      { src: "/images/About/brand-content-02a.png", alt: "器は、舞台である" },
-      { src: "/images/About/brand-content-02b.png", alt: "器の設計" },
+      { src: "/images/About/brand-content-02a.webp", alt: "器は、舞台である" },
+      { src: "/images/About/brand-content-02b.webp", alt: "器の設計" },
     ],
   },
   {
     id: "chapter-03",
     chapterLabel: "Chapter 03",
     title: "技術が、体験を可能にする",
-    heroImage: "/images/About/brand-hero-03.png",
+    heroImage: "/images/About/brand-hero-03.webp",
     english:
       "The vessel experience is decided in the details. Yet in traditional pottery, trying and verifying those small differences again and again was never easy. New shapes required plaster molds—costly and time-consuming to make. Revise a shape and try again: repeating that cycle was rarely practical. So it was hard to push every detail that touches the experience—mouthfeel, flow—to the limit. CAFORA uses proprietary 3D ceramic printing to change that constraint. Shape, pour a latte or coffee, taste, adjust—and repeat on a short cycle. That iteration optimizes not only looks but shapes that directly shape the experience. Technology is not only for forming clay—it is how we verify and refine experience. Through this process, CAFORA finds the shape a single cup truly needs.",
     japanese:
       "器の体験は、細部の設計によって決まります。しかしこれまでの陶器製作では、その細かな違いを何度も試し、検証していくことは簡単ではありませんでした。新しい形をつくるには石膏型が必要で、その製作にはコストと時間がかかる。一度つくった形を修正し、再び試す。そのサイクルを繰り返すことは、現実的には難しいものでした。そのため、口当たりや流れ方といった、体験に直結する部分まで徹底的に突き詰めることには限界がありました。CAFORAでは、独自の3D陶器プリンター技術を活用することで、この制約を大きく変えています。形をつくり、実際にラテやコーヒーを注ぎ、飲み、味わいを確かめ、再び調整する。そのサイクルを、短いスパンで何度でも繰り返すことができる。この反復によって、見た目だけでなく、体験に直結する形状の最適化が可能になりました。技術は、形をつくるためのものではなく、体験を検証し、磨き上げるための手段です。CAFORAは、このプロセスを通じて、一杯の体験に本当に必要な形を導き出しています。",
     imageLayout: "single",
-    images: [{ src: "/images/About/brand-content-03.png", alt: "技術が、体験を可能にする" }],
+    images: [{ src: "/images/About/brand-content-03.webp", alt: "技術が、体験を可能にする" }],
   },
   {
     id: "chapter-04",
     chapterLabel: "Chapter 04",
     title: "伝統の中で、形になる",
-    heroImage: "/images/About/brand-hero-04.png",
+    heroImage: "/images/About/brand-hero-04.webp",
     english:
       "No matter how much we design, material and firing finally give experience its form. CAFORA pieces are fired in Seto–Mino, with a thousand years of history. Clay, glaze, and firing craft here have been honed and handed down over generations. However precisely we design a form, the final texture and character are decided in the kiln. From design through Seto–Mino processes, CAFORA carries the whole chain to raise not only shape but the completeness of the experience. Within an even form, slight variation appears—and that becomes the feel in the hand and the presence in the room. The form design reveals, and the reliable craft inherited over time: only when both meet does the vessel stand as part of the experience. CAFORA shapes vessels worthy of that experience by carrying both design and tradition in one line.",
     japanese:
       "どれだけ設計を重ねても、最終的に体験をかたちにするのは、素材と焼きです。CAFORAの器は、1000年の歴史を持つ瀬戸・美濃焼で焼かれています。この地で培われてきた土の扱い、釉薬の配合、焼成の技術は、長い年月の中で磨かれ、受け継がれてきたものです。どれだけ正確に形を設計しても、最終的な質感や表情は、焼きによって決まります。CAFORAでは、設計から瀬戸・美濃焼の工程までを一貫して担うことで、形だけでなく、体験としての完成度を高めています。均一に整えられた形の中に、わずかな揺らぎが生まれる。その揺らぎが、手に取ったときの質感や、空間に置かれたときの印象をつくります。設計によって導き出された形と、受け継がれてきた確かな技術。その両方が重なってはじめて、器は体験の一部として成立します。CAFORAは、設計と伝統、その両方を一貫して担うことで、体験にふさわしい器を形にしています。",
     imageLayout: "double",
     images: [
-      { src: "/images/About/brand-content-04a.png", alt: "伝統の中で、形になる" },
-      { src: "/images/About/brand-content-04b.png", alt: "瀬戸・美濃焼" },
+      { src: "/images/About/brand-content-04a.webp", alt: "伝統の中で、形になる" },
+      { src: "/images/About/brand-content-04b.webp", alt: "瀬戸・美濃焼" },
     ],
   },
   {
     id: "chapter-05",
     chapterLabel: "Chapter 05",
     title: "CAFORAという考え方",
-    heroImage: "/images/About/brand-hero-05.png",
+    heroImage: "/images/About/brand-hero-05.webp",
     english:
       "The name CAFORA combines CAFE and AURA. We want to be more than a provider of vessels—to help shape the atmosphere that flows through a café. A drink does not end with taste alone. Space, time, gesture, and vessel overlap and stay in memory as experience. At the center, the vessel quietly steadies the whole without stealing the show. Through designed form, refined technique, and inherited firing, we keep shaping experience. CAFORA is a brand that designs experience—from the vessel outward.",
     japanese:
       "CAFORAという名前は、CAFEとAURAを組み合わせたものです。私たちは、器を提供するだけでなく、カフェという空間に流れる雰囲気そのものをかたちづくる存在でありたいと考えています。一杯の飲み物は、味だけで完結するものではありません。空間、時間、所作、そして器。それらが重なり合い、体験として記憶に残ります。器は、その中心にありながら、目立ちすぎることなく、体験全体を整えていく。設計された形、磨き上げられた技術、受け継がれてきた焼き。そのすべてを通して、私たちは体験をつくっています。CAFORAは、器から、体験を設計するブランドです。",
     imageLayout: "single",
-    images: [{ src: "/images/About/brand-content-05.png", alt: "CAFORAという考え方" }],
+    images: [{ src: "/images/About/brand-content-05.webp", alt: "CAFORAという考え方" }],
   },
 ];
 

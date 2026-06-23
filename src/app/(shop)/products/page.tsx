@@ -19,7 +19,7 @@ const PRODUCTS = [
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
     capacity: "280ml",
     price: 2000,
-    image: "/images/home/latte-bowl-on.png",
+    image: "/images/home/latte-bowl-on.webp",
   },
   {
     slug: LATTE_BOWL_PRODUCTS.kaku.slug,
@@ -30,7 +30,7 @@ const PRODUCTS = [
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
     capacity: "280ml",
     price: 2000,
-    image: "/images/home/latte-bowl-kaku.png",
+    image: "/images/home/latte-bowl-kaku.webp",
   },
 ];
 

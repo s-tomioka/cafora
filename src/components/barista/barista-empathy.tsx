@@ -33,7 +33,7 @@ export function BaristaEmpathy() {
 
           <FadeUp delay={200}>
             <div className="relative mt-14 aspect-[3/1] w-full overflow-hidden">
-              <Image src="/images/Baristas/empathy-photo.png" alt="一杯にこだわるほど違和感が残る" fill className="object-cover" sizes="(max-width: 768px) 100vw, 680px" />
+              <Image src="/images/Baristas/empathy-photo.webp" alt="一杯にこだわるほど違和感が残る" fill className="object-cover" sizes="(max-width: 768px) 100vw, 680px" />
             </div>
           </FadeUp>
         </div>

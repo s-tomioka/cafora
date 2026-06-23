@@ -11,7 +11,7 @@ export function BaristaComparison() {
             {/* TODO: Replace with actual comparison test / multiple bowls photo */}
             <div className="relative aspect-[4/3] overflow-hidden bg-stone-100">
               <Image
-                src="/images/product/kaku-1.png"
+                src="/images/product/kaku-1.webp"
                 alt="複数のラテボウルを用いた比較検証"
                 fill
                 className="object-cover"
