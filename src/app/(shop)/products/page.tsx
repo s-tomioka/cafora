@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
-import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName } from "@/constants";
+import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName, formatLatteBowlPriceRange } from "@/constants";
 
 export const metadata: Metadata = {
   title: "商品を探す",
@@ -17,8 +17,6 @@ const PRODUCTS = [
     tagline: "両手で包む、冬のひととき",
     description:
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
-    capacity: "280ml",
-    price: 2000,
     image: "/images/home/latte-bowl-on.webp",
   },
   {
@@ -28,8 +26,6 @@ const PRODUCTS = [
     tagline: "見惚れて、味わう",
     description:
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
-    capacity: "280ml",
-    price: 2000,
     image: "/images/home/latte-bowl-kaku.webp",
   },
 ];
@@ -84,7 +80,7 @@ export default function ProductsPage() {
 
                   <div className="mt-6 flex items-end justify-between">
                     <p className="text-lg font-semibold">
-                      &yen;{product.price.toLocaleString()}
+                      &yen;{formatLatteBowlPriceRange(product.slug)}
                       <span className="ml-1 text-xs font-normal text-muted-foreground">
                         税込
                       </span>

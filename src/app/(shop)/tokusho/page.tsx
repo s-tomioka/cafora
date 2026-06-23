@@ -98,7 +98,7 @@ const TOKUSHO_ITEMS: readonly TokushoItem[] = [
     label: "最低注文数量",
     content: {
       paragraphs: [
-        "CAFORAの器は業務用途を想定した受注生産のため、最低注文数量は20個からとなっています。",
+        "CAFORAの器は業務用途を想定した受注生産のため、最低注文数量は30個からとなっています。",
       ],
     },
   },

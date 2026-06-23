@@ -54,7 +54,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={notoSerifJP.variable}>
+    <html lang="ja" className={notoSerifJP.variable} suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"

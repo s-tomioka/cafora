@@ -5,10 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { X, Minus, Plus } from "lucide-react";
 import { useCart } from "@/contexts/cart-context";
-import { MIN_ORDER_QUANTITY, formatProductDisplayName } from "@/constants";
+import {
+  MIN_ORDER_QUANTITY,
+  FREE_SHIPPING_QUANTITY,
+  alertMinOrderQuantity,
+  getMinOrderQuantityMessage,
+  formatProductDisplayName,
+} from "@/constants";
 import { TwoToneSwatch, getTwoToneSplitForProduct } from "@/components/ui/two-tone-swatch";
-
-const FREE_SHIPPING_THRESHOLD = 100_000;
 
 function formatPrice(n: number) {
   return `¥${n.toLocaleString("ja-JP")}`;
@@ -31,6 +35,7 @@ function QuantityStepper({
           onClick={() => {
             if (value <= MIN_ORDER_QUANTITY) {
               setQuantityError(true);
+              alertMinOrderQuantity();
             } else {
               setQuantityError(false);
               onChange(value - 1);
@@ -54,6 +59,7 @@ function QuantityStepper({
           }}
           onBlur={() => {
             if (value < MIN_ORDER_QUANTITY) {
+              alertMinOrderQuantity();
               onChange(MIN_ORDER_QUANTITY);
               setQuantityError(false);
             }
@@ -73,7 +79,7 @@ function QuantityStepper({
       </div>
       {quantityError && (
         <p className="mt-2 text-xs text-red-500">
-          最小注文ロット数は{MIN_ORDER_QUANTITY}個になります。
+          {getMinOrderQuantityMessage()}
         </p>
       )}
     </div>
@@ -89,8 +95,9 @@ export function CartDrawer() {
     (sum, item) => sum + item.unitPrice * item.quantity,
     0
   );
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const shippingFee =
-    subtotal >= FREE_SHIPPING_THRESHOLD || subtotal === 0 ? 0 : 0;
+    totalQuantity >= FREE_SHIPPING_QUANTITY || subtotal === 0 ? 0 : 0;
   const total = subtotal + shippingFee;
 
   // ESC キーで閉じる
