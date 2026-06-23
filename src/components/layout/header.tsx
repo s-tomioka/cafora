@@ -12,7 +12,8 @@ const NAV_ITEMS = [
   { href: "/products", label: "商品を探す" },
   { href: "/barista", label: "WITH BARISTAS" },
   { href: "/brand", label: "CAFORAについて" },
-  { href: "/journal", label: "ジャーナル" },
+  // プレオープン中は非表示（ジャーナル準備中）
+  // { href: "/journal", label: "ジャーナル" },
   { href: "/faq", label: "よくあるご質問・お問合せ" },
 ] as const;
 
@@ -107,14 +108,17 @@ export function Header() {
               transition: "opacity 0.3s ease 0.4s, transform 0.3s ease 0.4s",
             }}
           >
-            <Link
-              href="/account"
-              className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-              onClick={closeMenu}
-            >
-              <User className="size-4" />
-              アカウント
-            </Link>
+            {/* プレオープン中はアカウント（ログイン）導線を非表示 */}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/account"
+                className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+                onClick={closeMenu}
+              >
+                <User className="size-4" />
+                アカウント
+              </Link>
+            )}
             {!IS_PRE_OPEN && (
               <Link
                 href="/cart"
@@ -178,13 +182,16 @@ export function Header() {
 
           {/* Right Icons */}
           <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2 lg:flex-none lg:ml-6">
-            <Link
-              href="/account"
-              className="inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="アカウント"
-            >
-              <User className="size-5" />
-            </Link>
+            {/* プレオープン中はアカウント（ログイン）導線を非表示 */}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/account"
+                className="inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="アカウント"
+              >
+                <User className="size-5" />
+              </Link>
+            )}
             {!IS_PRE_OPEN && (
               <Link
                 href="/cart"

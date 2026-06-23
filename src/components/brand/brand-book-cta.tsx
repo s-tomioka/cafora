@@ -33,7 +33,7 @@ export function BrandBookCTA() {
           <FadeUp delay={240}>
             <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6">
               <a
-                href="https://caforabrand.vercel.app/"
+                href="https://brand.cafora.jp/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-white px-10 py-4 text-sm font-medium text-stone-900 transition-colors duration-300 hover:bg-white/90 sm:text-base"
