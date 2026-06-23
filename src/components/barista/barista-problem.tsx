@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { FadeUp } from "@/components/ui/scroll-animate";
 
 const SLIDE_IMAGES = [
-  { src: "/images/Baristas/problem-01.png", alt: "ラテボウルの比較 01" },
-  { src: "/images/Baristas/problem-02.png", alt: "ラテボウルの比較 02" },
-  { src: "/images/Baristas/problem-03.png", alt: "ラテボウルの比較 03" },
+  { src: "/images/Baristas/problem-01.webp", alt: "ラテボウルの比較 01" },
+  { src: "/images/Baristas/problem-02.webp", alt: "ラテボウルの比較 02" },
+  { src: "/images/Baristas/problem-03.webp", alt: "ラテボウルの比較 03" },
 ];
 
 function AutoSlider() {

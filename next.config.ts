@@ -13,6 +13,32 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // プレオープン中はジャーナル / アカウントを非公開。準備完了後にこのリダイレクトを削除する。
+  // permanent: false（307）でブラウザにキャッシュさせない
+  async redirects() {
+    return [
+      {
+        source: "/journal",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/journal/:slug*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/account",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/account/:slug*",
+        destination: "/",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

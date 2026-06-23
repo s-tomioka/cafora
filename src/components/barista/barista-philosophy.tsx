@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { FadeUp, FadeIn } from "@/components/ui/scroll-animate";
 
 const SLIDE_IMAGES = [
-  { src: "/images/Baristas/philosophy-01.png", alt: "器づくりの現場 01" },
-  { src: "/images/Baristas/philosophy-02.png", alt: "器づくりの現場 02" },
-  { src: "/images/Baristas/philosophy-03.png", alt: "器づくりの現場 03" },
-  { src: "/images/Baristas/philosophy-04.png", alt: "器づくりの現場 04" },
-  { src: "/images/Baristas/philosophy-05.png", alt: "器づくりの現場 05" },
-  { src: "/images/Baristas/philosophy-06.png", alt: "器づくりの現場 06" },
+  { src: "/images/Baristas/philosophy-01.webp", alt: "器づくりの現場 01" },
+  { src: "/images/Baristas/philosophy-02.webp", alt: "器づくりの現場 02" },
+  { src: "/images/Baristas/philosophy-03.webp", alt: "器づくりの現場 03" },
+  { src: "/images/Baristas/philosophy-04.webp", alt: "器づくりの現場 04" },
+  { src: "/images/Baristas/philosophy-05.webp", alt: "器づくりの現場 05" },
+  { src: "/images/Baristas/philosophy-06.webp", alt: "器づくりの現場 06" },
 ];
 
 function FastAutoSlider() {

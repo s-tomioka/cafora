@@ -25,24 +25,24 @@ type HeroSlide = {
 
 const SLIDES: HeroSlide[] = [
   {
-    srcPc: "/images/home/slide-barista-pc.png",
-    srcSp: "/images/home/slide-barista-sp.png",
+    srcPc: "/images/home/slide-barista-pc.webp",
+    srcSp: "/images/home/slide-barista-sp.webp",
     alt: "バリスタのための器",
     href: "/barista",
     pcUnoptimized: true,
     spUnoptimized: true,
   },
   {
-    srcPc: "/images/home/slide-seto-pc.png",
-    srcSp: "/images/home/slide-seto-sp.png",
+    srcPc: "/images/home/slide-seto-pc.webp",
+    srcSp: "/images/home/slide-seto-sp.webp",
     alt: "瀬戸・美濃焼の技術で生まれたCAFORAの器",
     href: "/brand",
     pcUnoptimized: true,
     spUnoptimized: true,
   },
   {
-    srcPc: "/images/home/slide-main-pc.png",
-    srcSp: "/images/home/slide-main-sp.png",
+    srcPc: "/images/home/slide-main-pc.webp",
+    srcSp: "/images/home/slide-main-sp.webp",
     alt: "CAFORA - ON & KAKU ラテボウル",
     href: "/products",
     pcClassName: "brightness-[0.94] contrast-[1.06]",

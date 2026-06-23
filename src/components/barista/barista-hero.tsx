@@ -6,7 +6,7 @@ export function BaristaHero() {
     <section className="relative min-h-[70vh] overflow-hidden bg-stone-900">
       {/* Background image — SP / PC 出し分け */}
       <Image
-        src="/images/Baristas/banner-sp.png"
+        src="/images/Baristas/banner-sp.webp"
         alt="WITH BARISTAS - バリスタと共に、器をつくる"
         fill
         className="object-cover opacity-60 sm:hidden"
@@ -14,7 +14,7 @@ export function BaristaHero() {
         priority
       />
       <Image
-        src="/images/Baristas/banner-pc.png"
+        src="/images/Baristas/banner-pc.webp"
         alt="WITH BARISTAS - バリスタと共に、器をつくる"
         fill
         className="hidden object-cover opacity-60 sm:block"

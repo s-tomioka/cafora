@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { LATTE_BOWL_COLOR_OPTIONS, LOGO_SURCHARGE, formatProductDisplayName } from "@/constants";
+import { LATTE_BOWL_COLOR_OPTIONS, LOGO_SURCHARGE, IS_PRE_OPEN, formatProductDisplayName } from "@/constants";
 import type { LatteBowlColorOption } from "@/constants";
 import {
   TwoToneSwatch,
@@ -58,7 +58,7 @@ const MOCK_ORDERS: Order[] = [
     items: [
       {
         slug: "on",
-        image: "/images/product/latte-bowl-on.png",
+        image: "/images/product/latte-bowl-on.webp",
         product: "温（ON）",
         capacity: "240ml",
         baseUnitPrice: 2000,
@@ -70,7 +70,7 @@ const MOCK_ORDERS: Order[] = [
       },
       {
         slug: "kaku",
-        image: "/images/product/latte-bowl-kaku.png",
+        image: "/images/product/latte-bowl-kaku.webp",
         product: "拡（KAKU）",
         capacity: "280ml",
         baseUnitPrice: 2000,
@@ -91,7 +91,7 @@ const MOCK_ORDERS: Order[] = [
     items: [
       {
         slug: "on",
-        image: "/images/product/latte-bowl-on.png",
+        image: "/images/product/latte-bowl-on.webp",
         product: "温（ON）",
         capacity: "240ml",
         baseUnitPrice: 2000,
@@ -196,21 +196,23 @@ function OrderCard({ order }: { order: Order }) {
                     ¥{item.unitPrice.toLocaleString()}
                     <span className="ml-1 text-xs font-normal text-muted-foreground">税込</span>
                   </p>
-                  <Link
-                    href={buildReorderHref(item.slug, {
-                      colorNameEn: item.colorOption.nameEn,
-                      capacity: item.capacity,
-                      hasLogo: item.hasLogo,
-                    })}
-                    onClick={() => {
-                      if (item.hasLogo && item.logoPreviewUrl) {
-                        stashReorderLogo(item.logoPreviewUrl);
-                      }
-                    }}
-                    className="mt-1.5 inline-block text-xs underline underline-offset-4 transition-opacity hover:opacity-50"
-                  >
-                    再購入
-                  </Link>
+                  {!IS_PRE_OPEN && (
+                    <Link
+                      href={buildReorderHref(item.slug, {
+                        colorNameEn: item.colorOption.nameEn,
+                        capacity: item.capacity,
+                        hasLogo: item.hasLogo,
+                      })}
+                      onClick={() => {
+                        if (item.hasLogo && item.logoPreviewUrl) {
+                          stashReorderLogo(item.logoPreviewUrl);
+                        }
+                      }}
+                      className="mt-1.5 inline-block text-xs underline underline-offset-4 transition-opacity hover:opacity-50"
+                    >
+                      再購入
+                    </Link>
+                  )}
                 </div>
               </div>
 

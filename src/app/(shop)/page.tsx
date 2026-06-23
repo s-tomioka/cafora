@@ -5,7 +5,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HeroCarousel } from "@/components/top/hero-carousel";
 import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
-import { InstagramSection } from "@/components/sections/instagram-section";
+// プレオープン中は非表示（Instagram 準備中）
+// import { InstagramSection } from "@/components/sections/instagram-section";
 import { AccordionItem } from "@/components/ui/accordion";
 import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName } from "@/constants";
 function SplitButton({ href, children }: { href: string; children: React.ReactNode }) {
@@ -32,7 +33,7 @@ const PRODUCTS = [
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
     price: 2000,
     capacity: "280ml",
-    image: "/images/home/latte-bowl-on.png",
+    image: "/images/home/latte-bowl-on.webp",
   },
   {
     slug: LATTE_BOWL_PRODUCTS.kaku.slug,
@@ -43,7 +44,7 @@ const PRODUCTS = [
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
     price: 2000,
     capacity: "280ml",
-    image: "/images/home/latte-bowl-kaku.png",
+    image: "/images/home/latte-bowl-kaku.webp",
   },
 ] as const;
 
@@ -144,6 +145,8 @@ const BLOG_POSTS = [
   },
 ] as const;
 
+// プレオープン中は呼び出し箇所をコメントアウト（ジャーナル準備中）。準備完了後に復活させる。
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function BlogSection() {
   return (
     <section className="pt-16 sm:pt-24">
@@ -204,7 +207,7 @@ function BaristaSection() {
           <Link href="/barista" className="relative block aspect-[4/3] overflow-hidden sm:aspect-[16/7]">
             {/* 背景画像 */}
             <Image
-              src="/images/Baristas/banner-pc.png"
+              src="/images/Baristas/banner-pc.webp"
               alt="WITH BARISTAS"
               fill
               className="object-cover"
@@ -250,7 +253,7 @@ function StorySection() {
           <FadeUp>
             <div className="relative aspect-[16/9] overflow-hidden">
               <Image
-                src="/images/About/story-main.png"
+                src="/images/About/story-main.webp"
                 alt="陶器の製造工程"
                 fill
                 className="object-cover"
@@ -339,8 +342,9 @@ export default function HomePage() {
       <HeroCarousel />
       <ProductsSection />
       <BaristaSection />
-      <BlogSection />
-      <InstagramSection />
+      {/* プレオープン中は非表示（ジャーナル / Instagram 準備中） */}
+      {/* <BlogSection /> */}
+      {/* <InstagramSection /> */}
       <StorySection />
       <FAQSection />
     </>

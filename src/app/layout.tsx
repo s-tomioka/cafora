@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { Noto_Serif_JP } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "@/contexts/cart-context";
 import { CartDrawer } from "@/components/cart/cart-drawer";
+import { IS_PRE_OPEN } from "@/constants";
+
+// 本番のみ計測する。NEXT_PUBLIC_GA_ID は Vercel の Production スコープにのみ登録すること
+// （Preview / ローカルでは未定義になり、GA タグは出力されない）。
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const notoSerifJP = Noto_Serif_JP({
   variable: "--font-sans",
@@ -57,10 +63,11 @@ export default function RootLayout({
         <CartProvider>
           <ScrollToTop />
           {children}
-          <CartDrawer />
+          {!IS_PRE_OPEN && <CartDrawer />}
           <Toaster position="top-right" />
         </CartProvider>
       </body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

@@ -5,13 +5,15 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ShoppingBag, User } from "lucide-react";
 import { CaforaLogo } from "@/components/ui/cafora-logo";
+import { IS_PRE_OPEN, PRE_OPEN_SALE_LABEL } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
 
 const NAV_ITEMS = [
   { href: "/products", label: "商品を探す" },
   { href: "/barista", label: "WITH BARISTAS" },
   { href: "/brand", label: "CAFORAについて" },
-  { href: "/journal", label: "ジャーナル" },
+  // プレオープン中は非表示（ジャーナル準備中）
+  // { href: "/journal", label: "ジャーナル" },
   { href: "/faq", label: "よくあるご質問・お問合せ" },
 ] as const;
 
@@ -106,22 +108,27 @@ export function Header() {
               transition: "opacity 0.3s ease 0.4s, transform 0.3s ease 0.4s",
             }}
           >
-            <Link
-              href="/account"
-              className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-              onClick={closeMenu}
-            >
-              <User className="size-4" />
-              アカウント
-            </Link>
-            <Link
-              href="/cart"
-              className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
-              onClick={closeMenu}
-            >
-              <ShoppingBag className="size-4" />
-              カート
-            </Link>
+            {/* プレオープン中はアカウント（ログイン）導線を非表示 */}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/account"
+                className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+                onClick={closeMenu}
+              >
+                <User className="size-4" />
+                アカウント
+              </Link>
+            )}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/cart"
+                className="flex flex-1 items-center justify-center gap-2 border border-border px-4 py-3 text-sm font-medium transition-colors hover:bg-muted"
+                onClick={closeMenu}
+              >
+                <ShoppingBag className="size-4" />
+                カート
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -130,7 +137,13 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-sm">
+      <div className="sticky top-0 z-50 w-full">
+        {IS_PRE_OPEN && (
+          <div className="bg-[#333333] py-2 text-center text-[14px] text-white">
+            {PRE_OPEN_SALE_LABEL}
+          </div>
+        )}
+        <header className="w-full bg-background/95 backdrop-blur-sm">
         <div className="container-cafora flex h-14 items-center sm:h-16">
           {/* Mobile: Hamburger — flex-1 でロゴを中央に */}
           <div className="flex flex-1 lg:hidden">
@@ -169,26 +182,32 @@ export function Header() {
 
           {/* Right Icons */}
           <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2 lg:flex-none lg:ml-6">
-            <Link
-              href="/account"
-              className="inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="アカウント"
-            >
-              <User className="size-5" />
-            </Link>
-            <Link
-              href="/cart"
-              className="relative inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="カート"
-            >
-              <ShoppingBag className="size-5" />
-              {itemCount > 0 && (
-                <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500" />
-              )}
-            </Link>
+            {/* プレオープン中はアカウント（ログイン）導線を非表示 */}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/account"
+                className="inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="アカウント"
+              >
+                <User className="size-5" />
+              </Link>
+            )}
+            {!IS_PRE_OPEN && (
+              <Link
+                href="/cart"
+                className="relative inline-flex items-center justify-center rounded-full p-2 text-foreground/80 transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="カート"
+              >
+                <ShoppingBag className="size-5" />
+                {itemCount > 0 && (
+                  <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-red-500" />
+                )}
+              </Link>
+            )}
           </div>
         </div>
-      </header>
+        </header>
+      </div>
 
       {/* Portal: headerのstacking contextの外にレンダリング */}
       {mounted && createPortal(mobileMenu, document.body)}
