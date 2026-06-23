@@ -21,6 +21,8 @@ const notoSerifJP = Noto_Serif_JP({
 });
 
 export const metadata: Metadata = {
+  // opengraph-image / twitter-image の絶対URL生成に使用（本番URL）
+  metadataBase: new URL("https://cafora.jp"),
   title: {
     default: "CAFORA | カフェのための、あなただけの陶器",
     template: "%s | CAFORA",
