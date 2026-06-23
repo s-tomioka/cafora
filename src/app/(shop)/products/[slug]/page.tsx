@@ -23,7 +23,6 @@ const PRODUCTS: Record<
   {
     name: string;
     nameEn: string;
-    price: number;
     capacity: string;
     description: string;
     images: string[];
@@ -33,8 +32,6 @@ const PRODUCTS: Record<
     otherNameEn: string;
     otherTagline: string;
     otherDescription: string;
-    otherPrice: number;
-    otherCapacity: string;
     otherImage: string;
     storyLabel: string;
     storyHeading: string;
@@ -45,8 +42,7 @@ const PRODUCTS: Record<
   on: {
     name: "温（ON）",
     nameEn: "Latte Bowl ON",
-    price: 2000,
-    capacity: "280ml",
+    capacity: "180ml",
     description:
       "ゆったりとした丸みのあるフォルムが手に馴染むラテボウル。カフェラテはもちろん、スープやデザートにも。",
     images: [
@@ -110,7 +106,7 @@ const PRODUCTS: Record<
         size: "sm",
         title: "瀬戸が創る独自のラテボウル",
         description:
-          "日本六古窯のひとつ、瀬戸でつくられるラテボウル。長く受け継がれてきた陶器の技術が、日常の一杯にやさしい質感を与えます。",
+          "日本六古窯のひとつ、瀬戸・美濃焼の産地でつくられるラテボウル。長く受け継がれてきた焼き物の技術が、日常の一杯にやさしい質感を与えます。",
       },
     ],
     otherSlug: "kaku",
@@ -118,8 +114,6 @@ const PRODUCTS: Record<
     otherNameEn: "KAKU",
     otherTagline: "見惚れて、味わう",
     otherDescription: "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
-    otherPrice: 2000,
-    otherCapacity: "280ml",
     otherImage: "/images/product/latte-bowl-kaku.webp",
     storyLabel: "温 -ON- が紡ぐ物語",
     storyHeading: "両手で包む、冬のひととき",
@@ -151,8 +145,7 @@ const PRODUCTS: Record<
   kaku: {
     name: "拡（KAKU）",
     nameEn: "Latte Bowl KAKU",
-    price: 2000,
-    capacity: "280ml",
+    capacity: "240ml",
     description:
       "すっきりとした直線が際立つモダンなフォルム。コーヒーからお茶まで、日常をアップデート。",
     images: [
@@ -208,7 +201,7 @@ const PRODUCTS: Record<
         size: "lg",
         title: "瀬戸で生まれるラテボウル",
         description:
-          "日本有数の陶磁器の産地、瀬戸で製作。長く培われた焼き物の技術が、質感と佇まいにやさしい奥行きを与えます。",
+          "瀬戸・美濃焼の産地で製作。長く培われた焼き物の技術が、質感と佇まいにやさしい奥行きを与えます。",
       },
     ],
     otherSlug: "on",
@@ -216,8 +209,6 @@ const PRODUCTS: Record<
     otherNameEn: "ON",
     otherTagline: "両手で包む、冬のひととき",
     otherDescription: "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
-    otherPrice: 2000,
-    otherCapacity: "280ml",
     otherImage: "/images/product/latte-bowl-on.webp",
     storyLabel: "拡 -KAKU- が紡ぐ物語",
     storyHeading: "見惚れて、味わう",
@@ -275,7 +266,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         slug={slug}
         name={product.name}
         nameEn={product.nameEn}
-        price={product.price}
         capacity={product.capacity}
         description={product.description}
         images={product.images}
@@ -289,8 +279,6 @@ export default async function ProductPage({ params }: { params: Params }) {
         otherNameEn={product.otherNameEn}
         otherTagline={product.otherTagline}
         otherDescription={product.otherDescription}
-        otherPrice={product.otherPrice}
-        otherCapacity={product.otherCapacity}
         otherImage={product.otherImage}
       />
     </Suspense>

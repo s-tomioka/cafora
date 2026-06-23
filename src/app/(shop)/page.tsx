@@ -8,7 +8,7 @@ import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
 // プレオープン中は非表示（Instagram 準備中）
 // import { InstagramSection } from "@/components/sections/instagram-section";
 import { AccordionItem } from "@/components/ui/accordion";
-import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName } from "@/constants";
+import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName, formatLatteBowlPriceRange } from "@/constants";
 function SplitButton({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -31,8 +31,6 @@ const PRODUCTS = [
     tagline: "両手で包む、冬のひととき",
     description:
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
-    price: 2000,
-    capacity: "280ml",
     image: "/images/home/latte-bowl-on.webp",
   },
   {
@@ -42,8 +40,6 @@ const PRODUCTS = [
     tagline: "見惚れて、味わう",
     description:
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
-    price: 2000,
-    capacity: "280ml",
     image: "/images/home/latte-bowl-kaku.webp",
   },
 ] as const;
@@ -101,7 +97,7 @@ function ProductsSection() {
 
                 <div className="mt-6 flex items-end justify-between">
                   <p className="text-lg font-semibold">
-                    &yen;{product.price.toLocaleString()}
+                    &yen;{formatLatteBowlPriceRange(product.slug)}
                     <span className="ml-1 text-xs font-normal text-muted-foreground">
                       税込
                     </span>
