@@ -11,6 +11,7 @@ const FOOTER_LINKS = [
   // { href: "/journal", label: "ジャーナル" },
   { href: "/faq", label: "よくあるご質問・お問合せ" },
   { href: "/company", label: "会社概要" },
+  { href: "/tokusho", label: "特定商取引法に基づく表記" },
   { href: "/privacy", label: "プライバシーポリシー" },
 ] as const;
 
