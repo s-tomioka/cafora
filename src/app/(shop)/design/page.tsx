@@ -793,7 +793,7 @@ export default function DesignPage() {
         <SectionTitle>07 · Quantity Stepper</SectionTitle>
         {/* 使用箇所: product-detail.tsx・cart-drawer.tsx・cart-view.tsx — インライン実装 */}
         <p className="mb-4 text-xs text-muted-foreground">
-          最小注文ロット制限（MIN_ORDER_QUANTITY = 20）あり。各ファイルにインライン実装（共通コンポーネント化未対応）。
+          最小注文ロット制限（MIN_ORDER_QUANTITY = 30）あり。各ファイルにインライン実装（共通コンポーネント化未対応）。
         </p>
         <SubTitle>商品詳細（size-8）</SubTitle>
         <Row>
@@ -1343,7 +1343,7 @@ export default function DesignPage() {
         <SubTitle>インラインエラー（product-detail.tsx 数量）</SubTitle>
         <Row>
           <p className="text-xs text-red-500">
-            最小注文ロット数は20個になります。
+            最小注文ロット数は30個になります。
           </p>
         </Row>
 
