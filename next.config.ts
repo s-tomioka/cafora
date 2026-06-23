@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
         destination: "/",
         permanent: false,
       },
+      // 開発者・デザイナー確認用のデザインシステムページ（外部非公開）
+      {
+        source: "/design",
+        destination: "/",
+        permanent: false,
+      },
     ];
   },
 };

@@ -4,7 +4,7 @@
 
 export const SITE_NAME = "CAFORA";
 export const SITE_DESCRIPTION =
-  "カフェのための、あなただけの陶器。ロゴ転写・7色カラー展開で、お店独自のブランド食器をお作りします。";
+  "カフェのための、あなただけの陶器。ロゴ転写・6色カラー展開で、お店独自のブランド食器をお作りします。";
 
 /** プレオープン期間中は true。正式販売開始時に false に切り替える。 */
 export const IS_PRE_OPEN = true;

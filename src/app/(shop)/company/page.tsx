@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 const COMPANY_INFO = [
   { label: "社名", value: "株式会社ChopsTech" },
-  { label: "資本金", value: "3,000,000 円" },
+  { label: "資本金", value: "10,000,000 円" },
   { label: "設立", value: "2023年11月1日" },
   { label: "所在地", value: "東京都渋谷区神宮前3-24-1 原宿鈴木ビル3階・4階" },
   { label: "代表取締役社長", value: "冨岡 周平" },
