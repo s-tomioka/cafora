@@ -1073,7 +1073,7 @@ export function ProductDetail({
                   <li>サイズ：直径約10cm × 高さ約8cm</li>
                   <li>容量：{selectedSize}</li>
                   <li>素材：磁器</li>
-                  <li>生産地：日本（美濃焼）</li>
+                  <li>生産地：日本（瀬戸・美濃焼）</li>
                   <li>製造方法：鋳込み成形</li>
                 </ul>
               </AccordionItem>
