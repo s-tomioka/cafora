@@ -174,13 +174,13 @@ export const LATTE_BOWL_SIZE_SPECS: Partial<
       productName: "ON 180ml",
       dimensions: "直径約8cm × 高さ約6.5cm",
       capacity: "180ml",
-      productionArea: "瀬戸/美濃焼",
+      productionArea: "瀬戸・美濃焼",
     },
     "240ml": {
       productName: "ON 240ml",
       dimensions: "直径約9cm × 高さ約7.5cm",
       capacity: "240ml",
-      productionArea: "瀬戸/美濃焼",
+      productionArea: "瀬戸・美濃焼",
     },
   },
   kaku: {
@@ -188,13 +188,13 @@ export const LATTE_BOWL_SIZE_SPECS: Partial<
       productName: "KAKU 240ml",
       dimensions: "直径約10cm × 高さ約5cm",
       capacity: "240ml",
-      productionArea: "瀬戸/美濃焼",
+      productionArea: "瀬戸・美濃焼",
     },
     "280ml": {
       productName: "KAKU 280ml",
       dimensions: "直径約10.5cm × 高さ約5.5cm",
       capacity: "280ml",
-      productionArea: "瀬戸/美濃焼",
+      productionArea: "瀬戸・美濃焼",
     },
   },
 };
