@@ -17,7 +17,7 @@ export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
  */
 export const IS_LOGO_UPLOAD_ENABLED = false;
 
-export const MIN_ORDER_QUANTITY = 20;
+export const MIN_ORDER_QUANTITY = 30;
 export const TAX_RATE = 0.1; // 消費税 10%
 export const LOGO_SURCHARGE = 500;
 
