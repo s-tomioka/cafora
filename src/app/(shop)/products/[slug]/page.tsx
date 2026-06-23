@@ -50,14 +50,14 @@ const PRODUCTS: Record<
     description:
       "ゆったりとした丸みのあるフォルムが手に馴染むラテボウル。カフェラテはもちろん、スープやデザートにも。",
     images: [
-      "/images/product/on-detail-charcoal-1.png",
-      "/images/product/on-detail-charcoal-2.png",
-      "/images/product/on-detail-3.png",
-      "/images/product/on-detail-4.png",
+      "/images/product/on-detail-charcoal-1.webp",
+      "/images/product/on-detail-charcoal-2.webp",
+      "/images/product/on-detail-3.webp",
+      "/images/product/on-detail-4.webp",
     ],
     featureImages: [
       {
-        src: "/images/product/on-feature-1.png",
+        src: "/images/product/on-feature-1.webp",
         alt: "温（ON）高台部分",
         size: "lg",
         title: "美味しい温度を長く保つ高台",
@@ -65,7 +65,7 @@ const PRODUCTS: Record<
           "高台構造による自然な保温。テーブルに直接触れる面積を減らすことで熱が逃げにくく、ラテの美味しい温度をゆっくり保ちます。",
       },
       {
-        src: "/images/product/on-feature-2.png",
+        src: "/images/product/on-feature-2.webp",
         alt: "温（ON）口元アップ",
         size: "lg",
         title: "泡を感じる口元設計",
@@ -73,7 +73,7 @@ const PRODUCTS: Record<
           "ミルクの泡を感じる口当たり。わずかにフラットな口元がミルクを一瞬受け止め、泡のやわらかさとラテの液体が同時に広がります。",
       },
       {
-        src: "/images/product/on-feature-3.png",
+        src: "/images/product/on-feature-3.webp",
         alt: "温（ON）全体",
         size: "sm",
         title: "ミルクの泡を長く保つ器形状",
@@ -81,7 +81,7 @@ const PRODUCTS: Record<
           "丸みのある器形状がミルクフォームをやさしく保ち、きめ細かな泡の層を長く維持します。ラテアートの美しさと、なめらかな口当たりを支える設計です。",
       },
       {
-        src: "/images/product/on-feature-4.png",
+        src: "/images/product/on-feature-4.webp",
         alt: "温（ON）内側の曲面",
         size: "sm",
         title: "最後まで均一な味わい",
@@ -89,7 +89,7 @@ const PRODUCTS: Record<
           "角のない内側の曲面設計。ミルクとエスプレッソが自然に対流し、最後の一口まで均等な味わいが続きます。",
       },
       {
-        src: "/images/product/on-feature-5.png",
+        src: "/images/product/on-feature-5.webp",
         alt: "温（ON）メインショット",
         size: "lg",
         title: "手のひらで感じる温もり",
@@ -97,7 +97,7 @@ const PRODUCTS: Record<
           "ラテの温度を考慮した器の厚み。持ち上げた瞬間、ラテの温かさが手のひらにじんわりと伝わります。飲む前から一杯の時間が始まるラテボウルです。",
       },
       {
-        src: "/images/product/on-feature-6.png",
+        src: "/images/product/on-feature-6.webp",
         alt: "両手でラテボウルを包む",
         size: "sm",
         title: "両手でも、片手でも",
@@ -105,7 +105,7 @@ const PRODUCTS: Record<
           "自由な持ち方を生むフォルム。片手で軽やかに持つことも、両手で包み込むこともできる形。その日の気分やカフェの時間に合わせて楽しめます。",
       },
       {
-        src: "/images/product/on-feature-7.png",
+        src: "/images/product/on-feature-7.webp",
         alt: "瀬戸焼のラテボウルON",
         size: "sm",
         title: "瀬戸が創る独自のラテボウル",
@@ -120,17 +120,17 @@ const PRODUCTS: Record<
     otherDescription: "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
     otherPrice: 2000,
     otherCapacity: "280ml",
-    otherImage: "/images/product/latte-bowl-kaku.png",
+    otherImage: "/images/product/latte-bowl-kaku.webp",
     storyLabel: "温 -ON- が紡ぐ物語",
     storyHeading: "両手で包む、冬のひととき",
     storyImages: [
       {
-        src: "/images/product/on-1.png",
+        src: "/images/product/on-1.webp",
         alt: "冬のカフェの入り口",
         afterParagraph: 2,
       },
       {
-        src: "/images/product/on-2.png",
+        src: "/images/product/on-2.webp",
         alt: "両手でラテボウルを包む手元",
         afterParagraph: 6,
       },
@@ -156,14 +156,14 @@ const PRODUCTS: Record<
     description:
       "すっきりとした直線が際立つモダンなフォルム。コーヒーからお茶まで、日常をアップデート。",
     images: [
-      "/images/product/kaku-detail-charcoal-1.png",
-      "/images/product/kaku-detail-charcoal-2.png",
-      "/images/product/kaku-detail-3.png",
-      "/images/product/kaku-detail-4.png",
+      "/images/product/kaku-detail-charcoal-1.webp",
+      "/images/product/kaku-detail-charcoal-2.webp",
+      "/images/product/kaku-detail-3.webp",
+      "/images/product/kaku-detail-4.webp",
     ],
     featureImages: [
       {
-        src: "/images/product/kaku-feature-1.png",
+        src: "/images/product/kaku-feature-1.webp",
         alt: "ラテアートが映えるワイドリム",
         size: "lg",
         title: "ラテアートが映えるワイドリム",
@@ -171,7 +171,7 @@ const PRODUCTS: Record<
           "広く開いた口径が、ラテアートを大きく美しく見せます。視界いっぱいに広がる一杯が、飲む前の体験をより豊かにします。",
       },
       {
-        src: "/images/product/kaku-feature-2.png",
+        src: "/images/product/kaku-feature-2.webp",
         alt: "クリームと液体が同時に味わえる口当たり",
         size: "lg",
         title: "泡と液体が同時に感じる口当たり",
@@ -179,7 +179,7 @@ const PRODUCTS: Record<
           "薄く設計された口元と角度により、ミルクの泡とエスプレッソが同時に流れ込みます。なめらかさとコクを同時に感じる設計です。",
       },
       {
-        src: "/images/product/kaku-feature-3.png",
+        src: "/images/product/kaku-feature-3.webp",
         alt: "ミルクフォームの薄層化",
         size: "sm",
         title: "ミルクフォームの「薄層化」",
@@ -187,7 +187,7 @@ const PRODUCTS: Record<
           "液面が広がることで、表面の泡の層を薄く引き延ばします。液体が唇を「面」で捉え、繊細な泡の質感をダイレクトに感じることができます。",
       },
       {
-        src: "/images/product/kaku-feature-4.png",
+        src: "/images/product/kaku-feature-4.webp",
         alt: "安定感を生む低重心フォルム",
         size: "sm",
         title: "安定感を生む低重心フォルム",
@@ -195,7 +195,7 @@ const PRODUCTS: Record<
           "高さを抑えた設計により、テーブルに置いたときの安定感を確保。カフェの提供・使用シーンでも扱いやすい形状です。",
       },
       {
-        src: "/images/product/kaku-feature-5.png",
+        src: "/images/product/kaku-feature-5.webp",
         alt: "所作を美しくする垂直ハンドル",
         size: "lg",
         title: "所作を美しくする垂直ハンドル",
@@ -203,7 +203,7 @@ const PRODUCTS: Record<
           "指に自然にフィットするハンドル形状。2本の指で持ち上げる動作をスムーズにし、カップを持つ所作を美しく見せます。",
       },
       {
-        src: "/images/product/kaku-feature-6.png",
+        src: "/images/product/kaku-feature-6.webp",
         alt: "瀬戸で生まれるラテボウル",
         size: "lg",
         title: "瀬戸で生まれるラテボウル",
@@ -218,17 +218,17 @@ const PRODUCTS: Record<
     otherDescription: "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
     otherPrice: 2000,
     otherCapacity: "280ml",
-    otherImage: "/images/product/latte-bowl-on.png",
+    otherImage: "/images/product/latte-bowl-on.webp",
     storyLabel: "拡 -KAKU- が紡ぐ物語",
     storyHeading: "見惚れて、味わう",
     storyImages: [
       {
-        src: "/images/product/kaku-1.png",
+        src: "/images/product/kaku-1.webp",
         alt: "カウンターに積み重なるラテボウル",
         afterParagraph: 2,
       },
       {
-        src: "/images/product/kaku-2.png",
+        src: "/images/product/kaku-2.webp",
         alt: "ラテアートが描かれた一杯",
         afterParagraph: 6,
       },

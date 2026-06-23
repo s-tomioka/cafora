@@ -104,7 +104,7 @@ export function getLatteBowlColorDetailImagePath(
   colorNameEn: string,
   shot: 1 | 2 = 1,
 ) {
-  return `/images/product/${slug}-detail-${colorNameEn.toLowerCase()}-${shot}.png`;
+  return `/images/product/${slug}-detail-${colorNameEn.toLowerCase()}-${shot}.webp`;
 }
 
 export function getLatteBowlGalleryImagePath(

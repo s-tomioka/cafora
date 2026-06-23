@@ -1,10 +1,10 @@
 import { FadeUp } from "@/components/ui/scroll-animate";
 
 const GRID_IMAGES = [
-  { src: "/images/Baristas/cocreation-grid-01.png", alt: "試飲の様子 01" },
-  { src: "/images/Baristas/cocreation-grid-02.png", alt: "試飲の様子 02" },
-  { src: "/images/Baristas/cocreation-grid-03.png", alt: "試飲の様子 03" },
-  { src: "/images/Baristas/cocreation-grid-04.png", alt: "試飲の様子 04" },
+  { src: "/images/Baristas/cocreation-grid-01.webp", alt: "試飲の様子 01" },
+  { src: "/images/Baristas/cocreation-grid-02.webp", alt: "試飲の様子 02" },
+  { src: "/images/Baristas/cocreation-grid-03.webp", alt: "試飲の様子 03" },
+  { src: "/images/Baristas/cocreation-grid-04.webp", alt: "試飲の様子 04" },
 ];
 
 export function BaristaCoCreation() {

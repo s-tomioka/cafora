@@ -33,7 +33,7 @@ const PRODUCTS = [
       "取っ手のないまるい器。両手で包むと、ラテの温もりがじんわり手のひらに伝わってくる。",
     price: 2000,
     capacity: "280ml",
-    image: "/images/home/latte-bowl-on.png",
+    image: "/images/home/latte-bowl-on.webp",
   },
   {
     slug: LATTE_BOWL_PRODUCTS.kaku.slug,
@@ -44,7 +44,7 @@ const PRODUCTS = [
       "広く開いた口に描かれるラテアート。口に運ぶと、この形でしか出ない口当たりに少し驚く。",
     price: 2000,
     capacity: "280ml",
-    image: "/images/home/latte-bowl-kaku.png",
+    image: "/images/home/latte-bowl-kaku.webp",
   },
 ] as const;
 
@@ -207,7 +207,7 @@ function BaristaSection() {
           <Link href="/barista" className="relative block aspect-[4/3] overflow-hidden sm:aspect-[16/7]">
             {/* 背景画像 */}
             <Image
-              src="/images/Baristas/banner-pc.png"
+              src="/images/Baristas/banner-pc.webp"
               alt="WITH BARISTAS"
               fill
               className="object-cover"
@@ -253,7 +253,7 @@ function StorySection() {
           <FadeUp>
             <div className="relative aspect-[16/9] overflow-hidden">
               <Image
-                src="/images/About/story-main.png"
+                src="/images/About/story-main.webp"
                 alt="陶器の製造工程"
                 fill
                 className="object-cover"

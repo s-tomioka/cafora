@@ -9,8 +9,8 @@ type ProductType = "on" | "kaku";
 
 // デフォルトのカフェ生成イメージ（API繋ぎ込み時に差し替え）
 const DEFAULT_IMAGE: Record<ProductType, string> = {
-  on: "/images/product/on-default.png",
-  kaku: "/images/product/kaku-default.png",
+  on: "/images/product/on-default.webp",
+  kaku: "/images/product/kaku-default.webp",
 };
 
 type Props = {

@@ -8,14 +8,14 @@ export function BaristaConclusion() {
       {/* TODO: Replace with actual product / atmosphere photo */}
       <div className="absolute inset-0">
         <Image
-          src="/images/Baristas/conclusion-bg-sp.png"
+          src="/images/Baristas/conclusion-bg-sp.webp"
           alt="こだわりの一杯は器と共に実現する"
           fill
           className="object-cover opacity-30 sm:hidden"
           sizes="100vw"
         />
         <Image
-          src="/images/Baristas/conclusion-bg.png"
+          src="/images/Baristas/conclusion-bg.webp"
           alt="こだわりの一杯は器と共に実現する"
           fill
           className="hidden object-cover opacity-30 sm:block"
