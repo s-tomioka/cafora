@@ -17,9 +17,18 @@ export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
  */
 export const IS_LOGO_UPLOAD_ENABLED = false;
 
-export const MIN_ORDER_QUANTITY = 20;
+export const MIN_ORDER_QUANTITY = 30;
 export const TAX_RATE = 0.1; // 消費税 10%
 export const LOGO_SURCHARGE = 500;
+
+// 送料（佐川急便・30個＝最低納品数ご注文時の目安）
+export const SHIPPING_FEES = [
+  { area: "東海（愛知・岐阜・静岡・三重）", fee: "¥4,880" },
+  { area: "関東・信越・北陸・関西", fee: "¥5,140" },
+  { area: "東北・中国・四国・九州", fee: "¥6,080" },
+  { area: "北海道", fee: "¥6,180" },
+  { area: "沖縄", fee: "¥7,500" },
+] as const;
 
 export const LATTE_BOWL_PRODUCTS = {
   on: {
