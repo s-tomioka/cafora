@@ -89,6 +89,13 @@ const LOGO_CROP_MAX_ZOOM = 4;
 const LOGO_CROP_ZOOM_STEP = 0.15;
 const LOGO_CROP_VIEWPORT_WIDTH = 320;
 
+// ロゴ合成プレビュー：スラッグ別のロゴ配置（画像寸法に対する比率、参照画像の赤矩形から算出）
+const COMPOSITE_LOGO_AREA: Record<string, { cx: number; cy: number; wf: number }> = {
+  kaku: { cx: 0.5758, cy: 0.4891, wf: 0.2328 },
+  on:   { cx: 0.5000, cy: 0.4641, wf: 0.2375 },
+};
+const COMPOSITE_LOGO_AREA_DEFAULT = { cx: 0.52, cy: 0.47, wf: 0.23 };
+
 function getLogoFitScale(
   imageSize: { width: number; height: number },
   viewportW: number,
@@ -162,6 +169,46 @@ function captureLogoViewportImage(
     };
     image.onerror = () => reject(new Error("ロゴ画像のトリミングに失敗しました。"));
     image.src = src;
+  });
+}
+
+function captureLogoCompositeImage(
+  productImagePath: string,
+  logoDataUrl: string,
+  slug: string,
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const productImg = new window.Image();
+    productImg.onload = () => {
+      const logoImg = new window.Image();
+      logoImg.onload = () => {
+        const W = productImg.naturalWidth;
+        const H = productImg.naturalHeight;
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("Canvas unavailable")); return; }
+
+        ctx.drawImage(productImg, 0, 0, W, H);
+
+        const { cx, cy, wf } = COMPOSITE_LOGO_AREA[slug] ?? COMPOSITE_LOGO_AREA_DEFAULT;
+        const logoW = W * wf;
+        const logoH = logoW / LOGO_CROP_ASPECT_RATIO;
+        const logoX = W * cx - logoW / 2;
+        const logoY = H * cy - logoH / 2;
+
+        ctx.globalCompositeOperation = "multiply";
+        ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+        ctx.globalCompositeOperation = "source-over";
+
+        resolve(canvas.toDataURL("image/png"));
+      };
+      logoImg.onerror = () => reject(new Error("ロゴ画像の読み込みに失敗しました。"));
+      logoImg.src = logoDataUrl;
+    };
+    productImg.onerror = () => reject(new Error("商品画像の読み込みに失敗しました。"));
+    productImg.src = productImagePath;
   });
 }
 
@@ -481,6 +528,7 @@ export function ProductDetail({
   const [hasLogo, setHasLogo] = useState(false);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoSourceUrl, setLogoSourceUrl] = useState<string | null>(null);
+  const [logoCompositeUrl, setLogoCompositeUrl] = useState<string | null>(null);
   const [logoImageSize, setLogoImageSize] = useState<{ width: number; height: number } | null>(null);
   const [isLogoCropOpen, setIsLogoCropOpen] = useState(false);
   const [isApplyingLogoCrop, setIsApplyingLogoCrop] = useState(false);
@@ -539,6 +587,32 @@ export function ProductDetail({
       }
     }
   }, [searchParams, sizeOptions]);
+
+  const logoSlideIndex = images.length;
+
+  useEffect(() => {
+    if (!hasLogo || !logoPreviewUrl) {
+      setLogoCompositeUrl(null);
+      setSelectedImage((prev) => (prev === logoSlideIndex ? 0 : prev));
+      return;
+    }
+
+    const productImageSrc = getLatteBowlColorDetailImagePath(slug, selectedColorOption, 1);
+    let cancelled = false;
+
+    captureLogoCompositeImage(productImageSrc, logoPreviewUrl, slug)
+      .then((url) => {
+        if (cancelled) return;
+        setLogoCompositeUrl(url);
+        setSelectedImage(logoSlideIndex);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLogoCompositeUrl(null);
+      });
+
+    return () => { cancelled = true; };
+  }, [hasLogo, logoPreviewUrl, selectedColorOption, slug, logoSlideIndex]);
 
   useLayoutEffect(() => {
     if (!isLogoCropOpen) return;
@@ -787,12 +861,10 @@ export function ProductDetail({
     storyImages.map((img) => [img.afterParagraph, img]),
   );
 
-  const displayImage = getLatteBowlGalleryImagePath(
-    slug,
-    selectedColorOption,
-    selectedImage,
-    images,
-  );
+  const isLogoSlide = selectedImage === logoSlideIndex && logoCompositeUrl !== null;
+  const displayImage = isLogoSlide
+    ? logoCompositeUrl!
+    : getLatteBowlGalleryImagePath(slug, selectedColorOption, selectedImage, images);
 
   return (
     <div className="py-8 sm:py-12">
@@ -804,8 +876,8 @@ export function ProductDetail({
             {/* メイン画像 */}
             <div className="relative aspect-square overflow-hidden bg-muted">
               <ProductMainImage
-                src={getProductImageSrc(displayImage)}
-                alt={`${name} - ${selectedImage + 1}`}
+                src={isLogoSlide ? logoCompositeUrl! : getProductImageSrc(displayImage)}
+                alt={isLogoSlide ? `${name} - ロゴ合成プレビュー` : `${name} - ${selectedImage + 1}`}
                 colorKey={selectedColorOption}
                 galleryIndex={selectedImage}
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -842,6 +914,23 @@ export function ProductDetail({
                 </button>
                 );
               })}
+              {logoCompositeUrl && (
+                <button
+                  key="logo-composite"
+                  onClick={() => setSelectedImage(logoSlideIndex)}
+                  className={`relative aspect-square w-16 overflow-hidden border sm:w-20 ${
+                    selectedImage === logoSlideIndex ? "border-foreground" : "border-transparent"
+                  }`}
+                  title="ロゴ合成プレビュー"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={logoCompositeUrl}
+                    alt={`${name} ロゴ合成プレビュー`}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </button>
+              )}
             </div>
           </FadeIn>
 
