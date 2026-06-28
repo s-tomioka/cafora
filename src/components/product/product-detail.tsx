@@ -90,11 +90,71 @@ const LOGO_CROP_ZOOM_STEP = 0.15;
 const LOGO_CROP_VIEWPORT_WIDTH = 320;
 
 // ロゴ合成プレビュー：スラッグ別のロゴ配置（画像寸法に対する比率、参照画像の赤矩形から算出）
-const COMPOSITE_LOGO_AREA: Record<string, { cx: number; cy: number; wf: number }> = {
-  kaku: { cx: 0.5758, cy: 0.4891, wf: 0.2328 },
-  on:   { cx: 0.5000, cy: 0.4641, wf: 0.2375 },
+// wa = 円筒歪み量 (0=なし, 0.3=強め)
+// wa = 水平円筒歪み量、vc = 上方カメラ視点による垂直カーブ量（両端が上がる）
+const COMPOSITE_LOGO_AREA: Record<string, { cx: number; cy: number; wf: number; wa: number; vc: number }> = {
+  kaku: { cx: 0.5758, cy: 0.4891, wf: 0.2328, wa: 0.55, vc: 0.06 },
+  on:   { cx: 0.5000, cy: 0.4641, wf: 0.2375, wa: 0.45, vc: 0.06 },
 };
-const COMPOSITE_LOGO_AREA_DEFAULT = { cx: 0.52, cy: 0.47, wf: 0.23 };
+const COMPOSITE_LOGO_AREA_DEFAULT = { cx: 0.52, cy: 0.47, wf: 0.23, wa: 0.50, vc: 0.06 };
+
+// 円筒面ラッピング用歪み（逆マッピング + 双線形補間）
+// amount: 水平円筒歪み量（0=なし、1=最大）
+// verticalCurve: 上方視点による両端の垂直カーブ量（両端が上がる、ロゴ高さに対する比率）
+function createCylindricalWarpedCanvas(
+  src: HTMLCanvasElement,
+  amount: number,
+  verticalCurve: number = 0,
+): HTMLCanvasElement {
+  if (amount <= 0 && verticalCurve <= 0) return src;
+  const W = src.width;
+  const H = src.height;
+  const dst = document.createElement("canvas");
+  dst.width = W;
+  dst.height = H;
+  const srcCtx = src.getContext("2d");
+  const dstCtx = dst.getContext("2d");
+  if (!srcCtx || !dstCtx) return src;
+
+  const srcData = srcCtx.getImageData(0, 0, W, H);
+  const dstData = dstCtx.createImageData(W, H);
+  const k = amount * (Math.PI / 2);
+  const sinK = Math.sin(k);
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const relX = (x / (W - 1)) * 2 - 1;  // -1..1
+
+      // 水平: 円筒逆投影
+      const srcRelX = amount > 0 ? Math.asin(relX * sinK) / k : relX;
+      const srcX = ((srcRelX + 1) / 2) * (W - 1);
+
+      // 垂直: 端に行くほど srcY を下にずらす → 表示は上に持ち上がる
+      const srcY = Math.min(Math.max(y + verticalCurve * relX * relX * H, 0), H - 1);
+
+      // 双線形補間（x・y 両方）
+      const x0 = Math.floor(srcX);
+      const x1 = Math.min(x0 + 1, W - 1);
+      const tx = srcX - x0;
+      const y0 = Math.floor(srcY);
+      const y1 = Math.min(y0 + 1, H - 1);
+      const ty = srcY - y0;
+
+      const dstIdx = (y * W + x) * 4;
+      for (let c = 0; c < 4; c++) {
+        const v00 = srcData.data[(y0 * W + x0) * 4 + c];
+        const v01 = srcData.data[(y0 * W + x1) * 4 + c];
+        const v10 = srcData.data[(y1 * W + x0) * 4 + c];
+        const v11 = srcData.data[(y1 * W + x1) * 4 + c];
+        dstData.data[dstIdx + c] =
+          (v00 * (1 - tx) + v01 * tx) * (1 - ty) +
+          (v10 * (1 - tx) + v11 * tx) * ty;
+      }
+    }
+  }
+  dstCtx.putImageData(dstData, 0, 0);
+  return dst;
+}
 
 function getLogoFitScale(
   imageSize: { width: number; height: number },
@@ -184,22 +244,37 @@ function captureLogoCompositeImage(
       logoImg.onload = () => {
         const W = productImg.naturalWidth;
         const H = productImg.naturalHeight;
+
+        const { cx, cy, wf, wa, vc } = COMPOSITE_LOGO_AREA[slug] ?? COMPOSITE_LOGO_AREA_DEFAULT;
+        const lW = Math.round(W * wf);
+        const lH = Math.round(lW / LOGO_CROP_ASPECT_RATIO);
+        const lX = Math.round(W * cx - lW / 2);
+        const lY = Math.round(H * cy - lH / 2);
+
+        // ① ロゴを印刷エリアサイズに縮小
+        const logoCanvas = document.createElement("canvas");
+        logoCanvas.width = lW;
+        logoCanvas.height = lH;
+        const logoCtx = logoCanvas.getContext("2d");
+        if (!logoCtx) { reject(new Error("Canvas unavailable")); return; }
+        logoCtx.drawImage(logoImg, 0, 0, lW, lH);
+
+        // ② 水平円筒歪み + 上方視点による垂直カーブを適用
+        const warpedLogo = createCylindricalWarpedCanvas(logoCanvas, wa, vc);
+
+        // ③ メインキャンバスにカップ画像を描画
         const canvas = document.createElement("canvas");
         canvas.width = W;
         canvas.height = H;
         const ctx = canvas.getContext("2d");
         if (!ctx) { reject(new Error("Canvas unavailable")); return; }
-
         ctx.drawImage(productImg, 0, 0, W, H);
 
-        const { cx, cy, wf } = COMPOSITE_LOGO_AREA[slug] ?? COMPOSITE_LOGO_AREA_DEFAULT;
-        const logoW = W * wf;
-        const logoH = logoW / LOGO_CROP_ASPECT_RATIO;
-        const logoX = W * cx - logoW / 2;
-        const logoY = H * cy - logoH / 2;
-
+        // ④ 歪んだロゴを multiply ブレンドで合成 + ぼかし（エッジを滲ませる）
+        ctx.filter = "blur(0.4px)";
         ctx.globalCompositeOperation = "multiply";
-        ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+        ctx.drawImage(warpedLogo, lX, lY, lW, lH);
+        ctx.filter = "none";
         ctx.globalCompositeOperation = "source-over";
 
         resolve(canvas.toDataURL("image/png"));
