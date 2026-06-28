@@ -5,10 +5,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HeroCarousel } from "@/components/top/hero-carousel";
 import { FadeUp, StaggerChildren } from "@/components/ui/scroll-animate";
-// プレオープン中は非表示（Instagram 準備中）
-// import { InstagramSection } from "@/components/sections/instagram-section";
+import { InstagramSection } from "@/components/sections/instagram-section";
 import { AccordionItem } from "@/components/ui/accordion";
-import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName, formatLatteBowlPriceRange } from "@/constants";
+import { getProductImageSrc, LATTE_BOWL_PRODUCTS, formatProductDisplayName, formatLatteBowlPriceRange, IS_JOURNAL_ENABLED, IS_INSTAGRAM_ENABLED } from "@/constants";
 function SplitButton({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -338,9 +337,9 @@ export default function HomePage() {
       <HeroCarousel />
       <ProductsSection />
       <BaristaSection />
-      {/* プレオープン中は非表示（ジャーナル / Instagram 準備中） */}
-      {/* <BlogSection /> */}
-      {/* <InstagramSection /> */}
+      {/* ジャーナル / Instagram は公開フラグが true のときのみ表示（microCMS連携後） */}
+      {IS_JOURNAL_ENABLED && <BlogSection />}
+      {IS_INSTAGRAM_ENABLED && <InstagramSection />}
       <StorySection />
       <FAQSection />
     </>
