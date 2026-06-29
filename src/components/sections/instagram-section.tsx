@@ -67,7 +67,7 @@ export function InstagramSection() {
             </button>
           ) : (
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/caforajp/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground"

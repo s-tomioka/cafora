@@ -6,16 +6,14 @@ export const SITE_NAME = "CAFORA";
 export const SITE_DESCRIPTION =
   "カフェのための、あなただけの陶器。ロゴ転写・6色カラー展開で、お店独自のブランド食器をお作りします。";
 
-/** プレオープン期間中は true。正式販売開始時に false に切り替える。 */
-export const IS_PRE_OPEN = true;
-export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
-
-/**
- * ロゴのファイルアップロード機能の有効/無効。
- * 初回ローンチ時は false（商品詳細では「ロゴをつける（+¥1,000 / 個）」を
- * 静的テキストのみ表示）。アップロード機能の準備が整ったら true に切り替える。
- */
-export const IS_LOGO_UPLOAD_ENABLED = true;
+// 公開フラグは src/flags.ts に一元管理（next.config.ts からも参照するため）
+export {
+  IS_PRE_OPEN,
+  PRE_OPEN_SALE_LABEL,
+  IS_LOGO_UPLOAD_ENABLED,
+  IS_JOURNAL_ENABLED,
+  IS_INSTAGRAM_ENABLED,
+} from "../flags";
 
 export const MIN_ORDER_QUANTITY = 30;
 export const TAX_RATE = 0.1; // 消費税 10%
@@ -91,13 +89,12 @@ export function formatProductDisplayName(name: string): string {
 
 // カラーパレット（初期データ）
 export const DEFAULT_COLORS = [
-  { name: "ホワイト", nameEn: "White", hexCode: "#F5F5F0" },
+  { name: "グレー", nameEn: "Gray", hexCode: "#A89A8F" },
   { name: "チャコール", nameEn: "Charcoal", hexCode: "#3A3A3A" },
-  { name: "テラコッタ", nameEn: "Terracotta", hexCode: "#C75B39" },
-  { name: "インディゴ", nameEn: "Indigo", hexCode: "#2C4A7C" },
-  { name: "セージ", nameEn: "Sage", hexCode: "#7D8B6E" },
-  { name: "サンド", nameEn: "Sand", hexCode: "#C4AD8F" },
   { name: "モカ", nameEn: "Mocha", hexCode: "#6B4E3D" },
+  { name: "モスグリーン", nameEn: "MossGreen", hexCode: "#8C8660" },
+  { name: "ブルーグレー", nameEn: "BlueGray", hexCode: "#6B7683" },
+  { name: "テラコッタ", nameEn: "Terracotta", hexCode: "#C75B39" },
 ] as const;
 
 export const LATTE_BOWL_COLOR_OPTIONS = [
