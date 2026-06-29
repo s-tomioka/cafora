@@ -65,7 +65,7 @@ export const HANDLING_CAUTION_NOTES = [
 
 export const PRODUCTION_AREA = "瀬戸・美濃焼";
 
-export const LOGO_FORMAT_LABEL = "EPS・SVG形式推奨";
+export const LOGO_FORMAT_LABEL = "SVG形式推奨";
 
 export const LOGO_ACCEPT_ATTRIBUTE =
   ".eps,.svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg,application/postscript,application/illustrator,application/eps,application/x-eps";

@@ -758,7 +758,7 @@ export function ProductDetail({
       setIsLogoCropOpen(true);
     } catch {
       window.alert(
-        "このファイル形式はプレビューできません。EPS・SVG形式推奨です。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。",
+        "このファイル形式はプレビューできません。SVG形式推奨です。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。",
       );
     } finally {
       e.target.value = "";
@@ -1177,7 +1177,9 @@ export function ProductDetail({
                       )}
                     </label>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
+                      ※ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
+                      <br />
+                      ※ロゴの転写エリアの実寸最大サイズは幅60mm × 高さ35mmです。
                     </p>
                   </div>
                 )}
