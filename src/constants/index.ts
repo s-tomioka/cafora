@@ -15,7 +15,7 @@ export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
  * 初回ローンチ時は false（商品詳細では「ロゴをつける（+¥1,000 / 個）」を
  * 静的テキストのみ表示）。アップロード機能の準備が整ったら true に切り替える。
  */
-export const IS_LOGO_UPLOAD_ENABLED = false;
+export const IS_LOGO_UPLOAD_ENABLED = true;
 
 export const MIN_ORDER_QUANTITY = 30;
 export const TAX_RATE = 0.1; // 消費税 10%
@@ -65,10 +65,10 @@ export const HANDLING_CAUTION_NOTES = [
 
 export const PRODUCTION_AREA = "瀬戸・美濃焼";
 
-export const LOGO_FORMAT_LABEL = "EPS・SVG形式推奨";
+export const LOGO_FORMAT_LABEL = "SVG形式推奨";
 
 export const LOGO_ACCEPT_ATTRIBUTE =
-  ".eps,.svg,image/svg+xml,application/postscript,application/illustrator,application/eps,application/x-eps";
+  ".eps,.svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg,application/postscript,application/illustrator,application/eps,application/x-eps";
 
 export const LATTE_BOWL_PRODUCTS = {
   on: {
@@ -259,6 +259,8 @@ export const LATTE_BOWL_ZONES = [
 export const LOGO_MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const LOGO_ACCEPTED_TYPES = [
   "image/svg+xml",
+  "image/png",
+  "image/jpeg",
   "application/postscript",
   "application/illustrator",
   "application/eps",

@@ -81,13 +81,80 @@ type Props = {
   otherImage: string;
 };
 
-const LOGO_CROP_ASPECT_RATIO = 16 / 9;
+const LOGO_CROP_ASPECT_RATIO = 60 / 35; // 実プリントエリア 60mm × 35mm
 const LOGO_CROP_OUTPUT_WIDTH = 512;
 const LOGO_CROP_OUTPUT_HEIGHT = Math.round(LOGO_CROP_OUTPUT_WIDTH / LOGO_CROP_ASPECT_RATIO);
 const LOGO_CROP_MIN_ZOOM = 0.4;
 const LOGO_CROP_MAX_ZOOM = 4;
 const LOGO_CROP_ZOOM_STEP = 0.15;
 const LOGO_CROP_VIEWPORT_WIDTH = 320;
+
+// ロゴ合成プレビュー：スラッグ別のロゴ配置（画像寸法に対する比率、参照画像の赤矩形から算出）
+// wa = 円筒歪み量 (0=なし, 0.3=強め)
+// wa = 水平円筒歪み量、vc = 上方カメラ視点による垂直カーブ量（両端が上がる）
+const COMPOSITE_LOGO_AREA: Record<string, { cx: number; cy: number; wf: number; wa: number; vc: number }> = {
+  kaku: { cx: 0.5758, cy: 0.4891, wf: 0.2328, wa: 0.55, vc: 0.06 },
+  on:   { cx: 0.5000, cy: 0.4641, wf: 0.2375, wa: 0.45, vc: 0.06 },
+};
+const COMPOSITE_LOGO_AREA_DEFAULT = { cx: 0.52, cy: 0.47, wf: 0.23, wa: 0.50, vc: 0.06 };
+
+// 円筒面ラッピング用歪み（逆マッピング + 双線形補間）
+// amount: 水平円筒歪み量（0=なし、1=最大）
+// verticalCurve: 上方視点による両端の垂直カーブ量（両端が上がる、ロゴ高さに対する比率）
+function createCylindricalWarpedCanvas(
+  src: HTMLCanvasElement,
+  amount: number,
+  verticalCurve: number = 0,
+): HTMLCanvasElement {
+  if (amount <= 0 && verticalCurve <= 0) return src;
+  const W = src.width;
+  const H = src.height;
+  const dst = document.createElement("canvas");
+  dst.width = W;
+  dst.height = H;
+  const srcCtx = src.getContext("2d");
+  const dstCtx = dst.getContext("2d");
+  if (!srcCtx || !dstCtx) return src;
+
+  const srcData = srcCtx.getImageData(0, 0, W, H);
+  const dstData = dstCtx.createImageData(W, H);
+  const k = amount * (Math.PI / 2);
+  const sinK = Math.sin(k);
+
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const relX = (x / (W - 1)) * 2 - 1;  // -1..1
+
+      // 水平: 円筒逆投影
+      const srcRelX = amount > 0 ? Math.asin(relX * sinK) / k : relX;
+      const srcX = ((srcRelX + 1) / 2) * (W - 1);
+
+      // 垂直: 端に行くほど srcY を下にずらす → 表示は上に持ち上がる
+      const srcY = Math.min(Math.max(y + verticalCurve * relX * relX * H, 0), H - 1);
+
+      // 双線形補間（x・y 両方）
+      const x0 = Math.floor(srcX);
+      const x1 = Math.min(x0 + 1, W - 1);
+      const tx = srcX - x0;
+      const y0 = Math.floor(srcY);
+      const y1 = Math.min(y0 + 1, H - 1);
+      const ty = srcY - y0;
+
+      const dstIdx = (y * W + x) * 4;
+      for (let c = 0; c < 4; c++) {
+        const v00 = srcData.data[(y0 * W + x0) * 4 + c];
+        const v01 = srcData.data[(y0 * W + x1) * 4 + c];
+        const v10 = srcData.data[(y1 * W + x0) * 4 + c];
+        const v11 = srcData.data[(y1 * W + x1) * 4 + c];
+        dstData.data[dstIdx + c] =
+          (v00 * (1 - tx) + v01 * tx) * (1 - ty) +
+          (v10 * (1 - tx) + v11 * tx) * ty;
+      }
+    }
+  }
+  dstCtx.putImageData(dstData, 0, 0);
+  return dst;
+}
 
 function getLogoFitScale(
   imageSize: { width: number; height: number },
@@ -162,6 +229,61 @@ function captureLogoViewportImage(
     };
     image.onerror = () => reject(new Error("ロゴ画像のトリミングに失敗しました。"));
     image.src = src;
+  });
+}
+
+function captureLogoCompositeImage(
+  productImagePath: string,
+  logoDataUrl: string,
+  slug: string,
+): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const productImg = new window.Image();
+    productImg.onload = () => {
+      const logoImg = new window.Image();
+      logoImg.onload = () => {
+        const W = productImg.naturalWidth;
+        const H = productImg.naturalHeight;
+
+        const { cx, cy, wf, wa, vc } = COMPOSITE_LOGO_AREA[slug] ?? COMPOSITE_LOGO_AREA_DEFAULT;
+        const lW = Math.round(W * wf);
+        const lH = Math.round(lW / LOGO_CROP_ASPECT_RATIO);
+        const lX = Math.round(W * cx - lW / 2);
+        const lY = Math.round(H * cy - lH / 2);
+
+        // ① ロゴを印刷エリアサイズに縮小
+        const logoCanvas = document.createElement("canvas");
+        logoCanvas.width = lW;
+        logoCanvas.height = lH;
+        const logoCtx = logoCanvas.getContext("2d");
+        if (!logoCtx) { reject(new Error("Canvas unavailable")); return; }
+        logoCtx.drawImage(logoImg, 0, 0, lW, lH);
+
+        // ② 水平円筒歪み + 上方視点による垂直カーブを適用
+        const warpedLogo = createCylindricalWarpedCanvas(logoCanvas, wa, vc);
+
+        // ③ メインキャンバスにカップ画像を描画
+        const canvas = document.createElement("canvas");
+        canvas.width = W;
+        canvas.height = H;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("Canvas unavailable")); return; }
+        ctx.drawImage(productImg, 0, 0, W, H);
+
+        // ④ 歪んだロゴを multiply ブレンドで合成 + ぼかし（エッジを滲ませる）
+        ctx.filter = "blur(0.4px)";
+        ctx.globalCompositeOperation = "multiply";
+        ctx.drawImage(warpedLogo, lX, lY, lW, lH);
+        ctx.filter = "none";
+        ctx.globalCompositeOperation = "source-over";
+
+        resolve(canvas.toDataURL("image/png"));
+      };
+      logoImg.onerror = () => reject(new Error("ロゴ画像の読み込みに失敗しました。"));
+      logoImg.src = logoDataUrl;
+    };
+    productImg.onerror = () => reject(new Error("商品画像の読み込みに失敗しました。"));
+    productImg.src = productImagePath;
   });
 }
 
@@ -481,6 +603,7 @@ export function ProductDetail({
   const [hasLogo, setHasLogo] = useState(false);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoSourceUrl, setLogoSourceUrl] = useState<string | null>(null);
+  const [logoCompositeUrl, setLogoCompositeUrl] = useState<string | null>(null);
   const [logoImageSize, setLogoImageSize] = useState<{ width: number; height: number } | null>(null);
   const [isLogoCropOpen, setIsLogoCropOpen] = useState(false);
   const [isApplyingLogoCrop, setIsApplyingLogoCrop] = useState(false);
@@ -539,6 +662,32 @@ export function ProductDetail({
       }
     }
   }, [searchParams, sizeOptions]);
+
+  const logoSlideIndex = images.length;
+
+  useEffect(() => {
+    if (!hasLogo || !logoPreviewUrl) {
+      setLogoCompositeUrl(null);
+      setSelectedImage((prev) => (prev === logoSlideIndex ? 0 : prev));
+      return;
+    }
+
+    const productImageSrc = getLatteBowlColorDetailImagePath(slug, selectedColorOption, 1);
+    let cancelled = false;
+
+    captureLogoCompositeImage(productImageSrc, logoPreviewUrl, slug)
+      .then((url) => {
+        if (cancelled) return;
+        setLogoCompositeUrl(url);
+        setSelectedImage(logoSlideIndex);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLogoCompositeUrl(null);
+      });
+
+    return () => { cancelled = true; };
+  }, [hasLogo, logoPreviewUrl, selectedColorOption, slug, logoSlideIndex]);
 
   useLayoutEffect(() => {
     if (!isLogoCropOpen) return;
@@ -609,7 +758,7 @@ export function ProductDetail({
       setIsLogoCropOpen(true);
     } catch {
       window.alert(
-        "このファイル形式はプレビューできません。EPS・SVG形式推奨です。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。",
+        "このファイル形式はプレビューできません。SVG形式推奨です。指定形式でアップロードできない場合は、お問合せフォームよりご相談ください。",
       );
     } finally {
       e.target.value = "";
@@ -787,12 +936,10 @@ export function ProductDetail({
     storyImages.map((img) => [img.afterParagraph, img]),
   );
 
-  const displayImage = getLatteBowlGalleryImagePath(
-    slug,
-    selectedColorOption,
-    selectedImage,
-    images,
-  );
+  const isLogoSlide = selectedImage === logoSlideIndex && logoCompositeUrl !== null;
+  const displayImage = isLogoSlide
+    ? logoCompositeUrl!
+    : getLatteBowlGalleryImagePath(slug, selectedColorOption, selectedImage, images);
 
   return (
     <div className="py-8 sm:py-12">
@@ -804,8 +951,8 @@ export function ProductDetail({
             {/* メイン画像 */}
             <div className="relative aspect-square overflow-hidden bg-muted">
               <ProductMainImage
-                src={getProductImageSrc(displayImage)}
-                alt={`${name} - ${selectedImage + 1}`}
+                src={isLogoSlide ? logoCompositeUrl! : getProductImageSrc(displayImage)}
+                alt={isLogoSlide ? `${name} - ロゴ合成プレビュー` : `${name} - ${selectedImage + 1}`}
                 colorKey={selectedColorOption}
                 galleryIndex={selectedImage}
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -842,6 +989,23 @@ export function ProductDetail({
                 </button>
                 );
               })}
+              {logoCompositeUrl && (
+                <button
+                  key="logo-composite"
+                  onClick={() => setSelectedImage(logoSlideIndex)}
+                  className={`relative aspect-square w-16 overflow-hidden border sm:w-20 ${
+                    selectedImage === logoSlideIndex ? "border-foreground" : "border-transparent"
+                  }`}
+                  title="ロゴ合成プレビュー"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={logoCompositeUrl}
+                    alt={`${name} ロゴ合成プレビュー`}
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </button>
+              )}
             </div>
           </FadeIn>
 
@@ -1013,7 +1177,9 @@ export function ProductDetail({
                       )}
                     </label>
                     <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
+                      ※ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
+                      <br />
+                      ※ロゴの転写エリアの実寸最大サイズは幅60mm × 高さ35mmです。
                     </p>
                   </div>
                 )}
@@ -1217,7 +1383,7 @@ export function ProductDetail({
           <div className="flex flex-col items-center gap-5 px-5 py-6 sm:px-6">
             <div
               ref={logoCropAreaRef}
-              className="relative aspect-video w-[min(90vw,320px)] overflow-hidden bg-white"
+              className="relative aspect-[60/35] w-[min(90vw,320px)] overflow-hidden bg-white"
               onPointerDown={handleLogoCropPointerDown}
               onPointerMove={handleLogoCropPointerMove}
               onPointerUp={handleLogoCropPointerUp}
