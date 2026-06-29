@@ -81,7 +81,7 @@ type Props = {
   otherImage: string;
 };
 
-const LOGO_CROP_ASPECT_RATIO = 16 / 9;
+const LOGO_CROP_ASPECT_RATIO = 60 / 35; // 実プリントエリア 60mm × 35mm
 const LOGO_CROP_OUTPUT_WIDTH = 512;
 const LOGO_CROP_OUTPUT_HEIGHT = Math.round(LOGO_CROP_OUTPUT_WIDTH / LOGO_CROP_ASPECT_RATIO);
 const LOGO_CROP_MIN_ZOOM = 0.4;
@@ -1381,7 +1381,7 @@ export function ProductDetail({
           <div className="flex flex-col items-center gap-5 px-5 py-6 sm:px-6">
             <div
               ref={logoCropAreaRef}
-              className="relative aspect-video w-[min(90vw,320px)] overflow-hidden bg-white"
+              className="relative aspect-[60/35] w-[min(90vw,320px)] overflow-hidden bg-white"
               onPointerDown={handleLogoCropPointerDown}
               onPointerMove={handleLogoCropPointerMove}
               onPointerUp={handleLogoCropPointerUp}
