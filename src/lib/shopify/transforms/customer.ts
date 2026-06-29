@@ -1,7 +1,7 @@
-import type { LatteBowlColorOption, LatteBowlProductSlug } from "@/constants";
+import type { LatteBowlProductSlug } from "@/constants";
 import { LOGO_SURCHARGE } from "@/constants";
 import { shopifyAmountToNumber } from "../utils";
-import type { AppOrder, AppOrderItem, ShopifyOrder } from "../types";
+import type { AppOrder, AppOrderItem, ColorOption, ShopifyOrder } from "../types";
 
 function getAttr(
   attrs: Array<{ key: string; value: string }>,
@@ -31,11 +31,7 @@ export function transformShopifyOrder(raw: ShopifyOrder): AppOrder {
     const colorUpperHex = getAttr(attrs, "color_upper_hex");
     const colorLowerHex = getAttr(attrs, "color_lower_hex");
 
-    type ColorOptionSubset = Pick<
-      LatteBowlColorOption,
-      "name" | "nameEn" | "upperHex" | "lowerHex"
-    >;
-    const colorOption: ColorOptionSubset | null =
+    const colorOption: ColorOption | null =
       colorName && colorNameEn && colorUpperHex && colorLowerHex
         ? {
             name: colorName,

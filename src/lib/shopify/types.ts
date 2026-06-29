@@ -1,4 +1,4 @@
-import type { LatteBowlColorOption, LatteBowlProductSlug } from "@/constants";
+import type { LatteBowlProductSlug } from "@/constants";
 
 // ─── Shopify API response types ──────────────────────────────────────────────
 
@@ -144,6 +144,13 @@ export type AppOrder = {
   items: AppOrderItem[];
 };
 
+export type ColorOption = {
+  name: string;
+  nameEn: string;
+  upperHex: string;
+  lowerHex: string;
+};
+
 export type CartItem = {
   id: string;
   slug: LatteBowlProductSlug;
@@ -154,10 +161,7 @@ export type CartItem = {
   logoUnitPrice: number;
   unitPrice: number;
   quantity: number;
-  colorOption: Pick<
-    LatteBowlColorOption,
-    "name" | "nameEn" | "upperHex" | "lowerHex"
-  > | null;
+  colorOption: ColorOption | null;
   hasLogo: boolean;
 };
 
@@ -168,9 +172,6 @@ export type AppOrderItem = {
   quantity: number;
   unitPrice: number;
   hasLogo: boolean;
-  colorOption: Pick<
-    LatteBowlColorOption,
-    "name" | "nameEn" | "upperHex" | "lowerHex"
-  > | null;
+  colorOption: ColorOption | null;
   logoUrl: string | null;
 };

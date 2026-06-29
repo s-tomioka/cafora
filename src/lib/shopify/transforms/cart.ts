@@ -1,8 +1,9 @@
-import type { LatteBowlColorOption, LatteBowlProductSlug } from "@/constants";
+import type { LatteBowlProductSlug } from "@/constants";
 import { LOGO_SURCHARGE } from "@/constants";
 import { shopifyAmountToNumber } from "../utils";
 import type {
   CartItem,
+  ColorOption,
   ShopifyCartLine,
   ShopifyCartLineAttribute,
   ShopifyCartLineInput,
@@ -18,17 +19,12 @@ const ATTR_HAS_LOGO = "has_logo";
 const ATTR_SLUG = "slug";
 const ATTR_BASE_PRICE = "base_unit_price";
 
-type ColorOptionSubset = Pick<
-  LatteBowlColorOption,
-  "name" | "nameEn" | "upperHex" | "lowerHex"
->;
-
 type BuildCartLineInputPayload = {
   variantId: string;
   quantity: number;
   slug: LatteBowlProductSlug;
   baseUnitPrice: number;
-  colorOption: ColorOptionSubset | null;
+  colorOption: ColorOption | null;
   hasLogo: boolean;
   logoUrl?: string;
 };
@@ -87,7 +83,7 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
   const colorUpperHex = getAttr(attrs, ATTR_COLOR_UPPER_HEX);
   const colorLowerHex = getAttr(attrs, ATTR_COLOR_LOWER_HEX);
 
-  const colorOption: ColorOptionSubset | null =
+  const colorOption: ColorOption | null =
     colorName && colorNameEn && colorUpperHex && colorLowerHex
       ? {
           name: colorName,
@@ -125,5 +121,5 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
   };
 }
 
-// Re-export CartItem type alias so imports from transforms/cart work
-export type { CartItem };
+// Re-export type aliases so imports from transforms/cart work
+export type { CartItem, ColorOption };

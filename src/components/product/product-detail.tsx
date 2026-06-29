@@ -44,6 +44,7 @@ import {
 } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
 import { consumeReorderLogo } from "@/lib/reorder";
+import { findVariantId, type AppProductVariant } from "@/lib/shopify";
 import { ExperienceChart, ON_POSITIONS, KAKU_POSITIONS } from "@/components/product/experience-chart";
 import { AI_VISUALIZER_ENABLED, AiVisualizer } from "@/components/product/ai-visualizer";
 
@@ -79,6 +80,7 @@ type Props = {
   otherTagline: string;
   otherDescription: string;
   otherImage: string;
+  variants?: AppProductVariant[];
 };
 
 const LOGO_CROP_ASPECT_RATIO = 60 / 35; // 実プリントエリア 60mm × 35mm
@@ -571,6 +573,7 @@ export function ProductDetail({
   otherTagline,
   otherDescription,
   otherImage,
+  variants,
 }: Props) {
   const { addItem } = useCart();
   const searchParams = useSearchParams();
@@ -589,10 +592,14 @@ export function ProductDetail({
 
   // Customization state
   const [selectedSize, setSelectedSize] = useState(defaultSize);
-  const selectedSizePrice = getLatteBowlSizePrice(
-    slug as LatteBowlProductSlug,
-    selectedSize,
-  );
+  // Shopify variant price when available; fall back to local constants
+  const selectedSizePrice = (() => {
+    if (variants) {
+      const v = variants.find((v) => v.size === selectedSize && !v.hasLogo);
+      if (v) return v.price;
+    }
+    return getLatteBowlSizePrice(slug as LatteBowlProductSlug, selectedSize);
+  })();
   const sizeSpec = getLatteBowlSizeSpec(
     slug as LatteBowlProductSlug,
     selectedSize,
@@ -601,6 +608,9 @@ export function ProductDetail({
     LATTE_BOWL_COLOR_OPTIONS[0].nameEn,
   );
   const [hasLogo, setHasLogo] = useState(false);
+  const selectedVariantId = variants
+    ? findVariantId(variants, selectedSize, hasLogo)
+    : null;
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoSourceUrl, setLogoSourceUrl] = useState<string | null>(null);
   const [logoCompositeUrl, setLogoCompositeUrl] = useState<string | null>(null);
@@ -735,6 +745,7 @@ export function ProductDetail({
         lowerHex: colorOptionData.lowerHex,
       },
       hasLogo,
+      variantId: selectedVariantId ?? undefined,
     });
   };
 

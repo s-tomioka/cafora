@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  IS_PRE_OPEN,
-  type LatteBowlColorOption,
-  type LatteBowlProductSlug,
-} from "@/constants";
+import { IS_PRE_OPEN } from "@/constants";
+import type { CartItem, ColorOption } from "@/lib/shopify/types";
 import {
   createContext,
   useContext,
@@ -13,30 +10,14 @@ import {
   ReactNode,
 } from "react";
 
-// ─── カートアイテム型 ─────────────────────────────────────────
-export type CartItem = {
-  id: string;
-  slug: LatteBowlProductSlug;
-  image: string;
-  name: string;
-  capacity: string;
-  baseUnitPrice: number;
-  logoUnitPrice: number;
-  unitPrice: number;
-  quantity: number;
-  colorOption: Pick<
-    LatteBowlColorOption,
-    "name" | "nameEn" | "upperHex" | "lowerHex"
-  > | null;
-  hasLogo: boolean;
-};
+export type { CartItem, ColorOption };
 
 // ─── コンテキスト型 ───────────────────────────────────────────
 type CartContextType = {
   items: CartItem[];
   itemCount: number;
   isDrawerOpen: boolean;
-  addItem: (item: Omit<CartItem, "id">) => void;
+  addItem: (item: Omit<CartItem, "id"> & { variantId?: string }) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   openDrawer: () => void;
@@ -64,12 +45,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const addItem = useCallback((newItem: Omit<CartItem, "id">) => {
-    if (IS_PRE_OPEN) return;
-    const id = `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    setItems((prev) => [...prev, { ...newItem, id }]);
-    setIsDrawerOpen(true);
-  }, []);
+  const addItem = useCallback(
+    (newItem: Omit<CartItem, "id"> & { variantId?: string }) => {
+      if (IS_PRE_OPEN) return;
+      const { variantId: _variantId, ...rest } = newItem;
+      const id = `item-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      setItems((prev) => [...prev, { ...rest, id }]);
+      setIsDrawerOpen(true);
+    },
+    [],
+  );
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
