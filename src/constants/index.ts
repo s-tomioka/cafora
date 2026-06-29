@@ -68,7 +68,7 @@ export const PRODUCTION_AREA = "瀬戸・美濃焼";
 export const LOGO_FORMAT_LABEL = "EPS・SVG形式推奨";
 
 export const LOGO_ACCEPT_ATTRIBUTE =
-  ".eps,.svg,image/svg+xml,application/postscript,application/illustrator,application/eps,application/x-eps";
+  ".eps,.svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg,application/postscript,application/illustrator,application/eps,application/x-eps";
 
 export const LATTE_BOWL_PRODUCTS = {
   on: {
@@ -259,6 +259,8 @@ export const LATTE_BOWL_ZONES = [
 export const LOGO_MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 export const LOGO_ACCEPTED_TYPES = [
   "image/svg+xml",
+  "image/png",
+  "image/jpeg",
   "application/postscript",
   "application/illustrator",
   "application/eps",
