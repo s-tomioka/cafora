@@ -1,19 +1,20 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { CaforaLogo } from "@/components/ui/cafora-logo";
+import { IS_JOURNAL_ENABLED } from "@/constants";
 
 const FOOTER_LINKS = [
   { href: "/", label: "ホーム" },
   { href: "/products", label: "商品を探す" },
   { href: "/barista", label: "WITH BARISTAS" },
   { href: "/brand", label: "CAFORAについて" },
-  // プレオープン中は非表示（ジャーナル準備中）
-  // { href: "/journal", label: "ジャーナル" },
+  // ジャーナルは公開フラグが true のときのみ表示（microCMS連携後）
+  ...(IS_JOURNAL_ENABLED ? [{ href: "/journal", label: "ジャーナル" }] : []),
   { href: "/faq", label: "よくあるご質問・お問合せ" },
   { href: "/company", label: "会社概要" },
   { href: "/tokusho", label: "特定商取引法に基づく表記" },
   { href: "/privacy", label: "プライバシーポリシー" },
-] as const;
+];
 
 export function Footer() {
   return (
