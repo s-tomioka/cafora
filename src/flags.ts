@@ -10,7 +10,7 @@
 //   3. 再デプロイ（next.config の redirect はビルド/起動時に評価されるため）
 
 /** プレオープン期間中は true。正式販売開始時に false に切り替える。 */
-export const IS_PRE_OPEN = true;
+export const IS_PRE_OPEN = false;
 
 /** プレオープン中にヘッダー上部へ表示する販売開始予定ラベル。 */
 export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
