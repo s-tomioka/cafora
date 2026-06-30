@@ -19,7 +19,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await customerCreate({ email, password, firstName, lastName });
+  const result = await customerCreate({
+    email,
+    password,
+    firstName: firstName || undefined,
+    lastName: lastName || undefined,
+  });
 
   if (result.customerUserErrors.length > 0) {
     const code = result.customerUserErrors[0].code;

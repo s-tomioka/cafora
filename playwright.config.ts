@@ -10,6 +10,9 @@ export default defineConfig({
   use: {
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     trace: "on-first-retry",
+    // Shopify hosted checkoutはExternal URLなのでnavigationを許可
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
   projects: [
     {
