@@ -110,6 +110,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           variantId: payload.variantId,
           quantity: payload.quantity,
           slug: payload.slug,
+          image: payload.image,
           baseUnitPrice: payload.baseUnitPrice,
           colorOption: payload.colorOption,
           hasLogo: payload.hasLogo,

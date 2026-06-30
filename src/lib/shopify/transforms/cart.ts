@@ -18,11 +18,13 @@ const ATTR_LOGO_URL = "logo_url";
 const ATTR_HAS_LOGO = "has_logo";
 const ATTR_SLUG = "slug";
 const ATTR_BASE_PRICE = "base_unit_price";
+const ATTR_IMAGE = "image";
 
 type BuildCartLineInputPayload = {
   variantId: string;
   quantity: number;
   slug: LatteBowlProductSlug;
+  image?: string;
   baseUnitPrice: number;
   colorOption: ColorOption | null;
   hasLogo: boolean;
@@ -36,6 +38,7 @@ export function buildCartLineInput(
     variantId,
     quantity,
     slug,
+    image,
     baseUnitPrice,
     colorOption,
     hasLogo,
@@ -47,6 +50,10 @@ export function buildCartLineInput(
     { key: ATTR_HAS_LOGO, value: hasLogo ? "true" : "false" },
     { key: ATTR_BASE_PRICE, value: String(baseUnitPrice) },
   ];
+
+  if (image) {
+    attributes.push({ key: ATTR_IMAGE, value: image });
+  }
 
   if (colorOption) {
     attributes.push(
@@ -106,10 +113,17 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
     raw.cost.amountPerQuantity.amount,
   );
 
+  const FALLBACK_IMAGES: Record<string, string> = {
+    on: "/images/product/latte-bowl-on.webp",
+    kaku: "/images/product/latte-bowl-kaku.webp",
+  };
+  const image =
+    getAttr(attrs, ATTR_IMAGE) ?? FALLBACK_IMAGES[slug] ?? "";
+
   return {
     id: raw.id,
     slug,
-    image: "",
+    image,
     name: raw.merchandise.product.title,
     capacity,
     baseUnitPrice: baseUnitPrice || pricePerItem - logoUnitPrice,
