@@ -37,10 +37,10 @@ describe("buildCartLineInput", () => {
       hasLogo: false,
     });
     const attrs = Object.fromEntries(input.attributes.map((a) => [a.key, a.value]));
-    expect(attrs["color_name"]).toBe("チャコール");
-    expect(attrs["color_name_en"]).toBe("Charcoal");
-    expect(attrs["color_upper_hex"]).toBe("#F4EFE8");
-    expect(attrs["color_lower_hex"]).toBe("#3A3A3A");
+    expect(attrs["_color_name"]).toBe("チャコール");
+    expect(attrs["_color_name_en"]).toBe("Charcoal");
+    expect(attrs["_color_upper_hex"]).toBe("#F4EFE8");
+    expect(attrs["_color_lower_hex"]).toBe("#3A3A3A");
   });
 
   it("includes logo_asset_id attribute when hasLogo=true and logoAssetId is provided", () => {
@@ -54,8 +54,8 @@ describe("buildCartLineInput", () => {
       logoAssetId: "1751234567890-a1b2c3d4",
     });
     const attrs = Object.fromEntries(input.attributes.map((a) => [a.key, a.value]));
-    expect(attrs["has_logo"]).toBe("true");
-    expect(attrs["logo_asset_id"]).toBe("1751234567890-a1b2c3d4");
+    expect(attrs["_has_logo"]).toBe("true");
+    expect(attrs["_logo_asset_id"]).toBe("1751234567890-a1b2c3d4");
   });
 
   it("accepts long strings as logo_asset_id (no 255-char limit)", () => {
@@ -70,7 +70,7 @@ describe("buildCartLineInput", () => {
       logoAssetId: longId,
     });
     const attrs = Object.fromEntries(input.attributes.map((a) => [a.key, a.value]));
-    expect(attrs["logo_asset_id"]).toBe(longId);
+    expect(attrs["_logo_asset_id"]).toBe(longId);
   });
 
   it("does not include logo_asset_id when hasLogo=false", () => {
@@ -83,7 +83,7 @@ describe("buildCartLineInput", () => {
       hasLogo: false,
     });
     const keys = input.attributes.map((a) => a.key);
-    expect(keys).not.toContain("logo_asset_id");
+    expect(keys).not.toContain("_logo_asset_id");
   });
 
   it("does not include color attributes when colorOption is null", () => {
@@ -96,8 +96,8 @@ describe("buildCartLineInput", () => {
       hasLogo: false,
     });
     const keys = input.attributes.map((a) => a.key);
-    expect(keys).not.toContain("color_name");
-    expect(keys).not.toContain("color_name_en");
+    expect(keys).not.toContain("_color_name");
+    expect(keys).not.toContain("_color_name_en");
   });
 });
 
@@ -130,20 +130,20 @@ const makeMockCartLine = (
   const baseUnitPrice = o.hasLogo ? o.unitPrice - 1000 : o.unitPrice;
 
   const attributes = [
-    { key: "slug", value: o.handle },
-    { key: "has_logo", value: o.hasLogo ? "true" : "false" },
-    { key: "base_unit_price", value: String(baseUnitPrice) },
+    { key: "_slug", value: o.handle },
+    { key: "_has_logo", value: o.hasLogo ? "true" : "false" },
+    { key: "_base_unit_price", value: String(baseUnitPrice) },
   ];
   if (o.colorOption) {
     attributes.push(
-      { key: "color_name", value: o.colorOption.name },
-      { key: "color_name_en", value: o.colorOption.nameEn },
-      { key: "color_upper_hex", value: o.colorOption.upperHex },
-      { key: "color_lower_hex", value: o.colorOption.lowerHex },
+      { key: "_color_name", value: o.colorOption.name },
+      { key: "_color_name_en", value: o.colorOption.nameEn },
+      { key: "_color_upper_hex", value: o.colorOption.upperHex },
+      { key: "_color_lower_hex", value: o.colorOption.lowerHex },
     );
   }
   if (o.hasLogo && o.logoAssetId) {
-    attributes.push({ key: "logo_asset_id", value: o.logoAssetId });
+    attributes.push({ key: "_logo_asset_id", value: o.logoAssetId });
   }
 
   return {

@@ -22,14 +22,14 @@ function formatOrderDate(isoString: string): string {
 export function transformShopifyOrder(raw: ShopifyOrder): AppOrder {
   const items: AppOrderItem[] = raw.lineItems.edges.map(({ node }) => {
     const attrs = node.customAttributes;
-    const hasLogo = getAttr(attrs, "has_logo") === "true";
-    const baseUnitPrice = parseInt(getAttr(attrs, "base_unit_price") ?? "0", 10);
+    const hasLogo = getAttr(attrs, "_has_logo") === "true";
+    const baseUnitPrice = parseInt(getAttr(attrs, "_base_unit_price") ?? "0", 10);
     const logoUnitPrice = hasLogo ? LOGO_SURCHARGE : 0;
 
-    const colorName = getAttr(attrs, "color_name");
-    const colorNameEn = getAttr(attrs, "color_name_en");
-    const colorUpperHex = getAttr(attrs, "color_upper_hex");
-    const colorLowerHex = getAttr(attrs, "color_lower_hex");
+    const colorName = getAttr(attrs, "_color_name");
+    const colorNameEn = getAttr(attrs, "_color_name_en");
+    const colorUpperHex = getAttr(attrs, "_color_upper_hex");
+    const colorLowerHex = getAttr(attrs, "_color_lower_hex");
 
     const colorOption: ColorOption | null =
       colorName && colorNameEn && colorUpperHex && colorLowerHex
@@ -41,7 +41,7 @@ export function transformShopifyOrder(raw: ShopifyOrder): AppOrder {
           }
         : null;
 
-    const slugAttr = getAttr(attrs, "slug");
+    const slugAttr = getAttr(attrs, "_slug");
     const slug = (slugAttr ??
       node.variant?.product.handle ??
       "on") as LatteBowlProductSlug;
