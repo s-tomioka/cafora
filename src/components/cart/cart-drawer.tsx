@@ -88,7 +88,7 @@ function QuantityStepper({
 
 // ─── カートドロワー ───────────────────────────────────────────
 export function CartDrawer() {
-  const { items, isDrawerOpen, closeDrawer, removeItem, updateQuantity } =
+  const { items, isDrawerOpen, closeDrawer, removeItem, updateQuantity, checkoutUrl } =
     useCart();
 
   const subtotal = items.reduce(
@@ -171,13 +171,22 @@ export function CartDrawer() {
             >
               カートの確認
             </Link>
-            <Link
-              href="/checkout"
-              onClick={closeDrawer}
-              className="flex items-center justify-center bg-foreground py-3 text-sm font-medium text-background transition-opacity hover:opacity-70"
-            >
-              購入手続き
-            </Link>
+            {checkoutUrl?.startsWith("https://") ? (
+              <a
+                href={checkoutUrl}
+                onClick={closeDrawer}
+                className="flex items-center justify-center bg-foreground py-3 text-sm font-medium text-background transition-opacity hover:opacity-70"
+              >
+                購入手続き
+              </a>
+            ) : (
+              <button
+                disabled
+                className="flex cursor-not-allowed items-center justify-center bg-foreground/40 py-3 text-sm font-medium text-background"
+              >
+                購入手続き
+              </button>
+            )}
           </div>
         </div>
 
@@ -202,7 +211,7 @@ export function CartDrawer() {
                 <div key={item.id} className="px-6 py-5">
                   <div className="flex gap-4">
                     <Link
-                      href={`/products/${item.slug}`}
+                      href={/^[a-z0-9-]+$/.test(item.slug) ? `/products/${item.slug}` : "/products"}
                       onClick={closeDrawer}
                       className="relative size-20 shrink-0 overflow-hidden bg-muted transition-opacity hover:opacity-70"
                     >

@@ -10,7 +10,7 @@
 //   3. 再デプロイ（next.config の redirect はビルド/起動時に評価されるため）
 
 /** プレオープン期間中は true。正式販売開始時に false に切り替える。 */
-export const IS_PRE_OPEN = true;
+export const IS_PRE_OPEN = false;
 
 /** プレオープン中にヘッダー上部へ表示する販売開始予定ラベル。 */
 export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
@@ -20,7 +20,7 @@ export const PRE_OPEN_SALE_LABEL = "2026年7月 販売開始予定";
  * 初回ローンチ時は false（商品詳細では「ロゴをつける（+¥1,000 / 個）」を
  * 静的テキストのみ表示）。アップロード機能の準備が整ったら true に切り替える。
  */
-export const IS_LOGO_UPLOAD_ENABLED = false;
+export const IS_LOGO_UPLOAD_ENABLED = true;
 
 /**
  * ジャーナルの公開フラグ。microCMS 連携・コンテンツ投入後に true。

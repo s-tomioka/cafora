@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { uploadLogoAsset } from "@/lib/supabase/logo-storage";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -44,6 +45,7 @@ import {
 } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
 import { consumeReorderLogo } from "@/lib/reorder";
+import { findVariantId, type AppProductVariant } from "@/lib/shopify";
 import { ExperienceChart, ON_POSITIONS, KAKU_POSITIONS } from "@/components/product/experience-chart";
 import { AI_VISUALIZER_ENABLED, AiVisualizer } from "@/components/product/ai-visualizer";
 
@@ -79,6 +81,7 @@ type Props = {
   otherTagline: string;
   otherDescription: string;
   otherImage: string;
+  variants?: AppProductVariant[];
 };
 
 const LOGO_CROP_ASPECT_RATIO = 60 / 35; // 実プリントエリア 60mm × 35mm
@@ -571,6 +574,7 @@ export function ProductDetail({
   otherTagline,
   otherDescription,
   otherImage,
+  variants,
 }: Props) {
   const { addItem } = useCart();
   const searchParams = useSearchParams();
@@ -589,10 +593,14 @@ export function ProductDetail({
 
   // Customization state
   const [selectedSize, setSelectedSize] = useState(defaultSize);
-  const selectedSizePrice = getLatteBowlSizePrice(
-    slug as LatteBowlProductSlug,
-    selectedSize,
-  );
+  // Shopify variant price when available; fall back to local constants
+  const selectedSizePrice = (() => {
+    if (variants) {
+      const v = variants.find((v) => v.size === selectedSize && !v.hasLogo);
+      if (v) return v.price;
+    }
+    return getLatteBowlSizePrice(slug as LatteBowlProductSlug, selectedSize);
+  })();
   const sizeSpec = getLatteBowlSizeSpec(
     slug as LatteBowlProductSlug,
     selectedSize,
@@ -601,6 +609,12 @@ export function ProductDetail({
     LATTE_BOWL_COLOR_OPTIONS[0].nameEn,
   );
   const [hasLogo, setHasLogo] = useState(false);
+  const selectedColorName = LATTE_BOWL_COLOR_OPTIONS.find(
+    (o) => o.nameEn === selectedColorOption,
+  )?.name;
+  const selectedVariantId = variants
+    ? findVariantId(variants, selectedSize, hasLogo, selectedColorName)
+    : null;
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoSourceUrl, setLogoSourceUrl] = useState<string | null>(null);
   const [logoCompositeUrl, setLogoCompositeUrl] = useState<string | null>(null);
@@ -706,7 +720,7 @@ export function ProductDetail({
   }, [isLogoCropOpen, logoSourceUrl]);
 
   // カートに追加（useCallback を外して常に最新 state を参照）
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (quantity < MIN_ORDER_QUANTITY) {
       setQuantityError(true);
       alertMinOrderQuantity();
@@ -719,7 +733,29 @@ export function ProductDetail({
       ) ?? LATTE_BOWL_COLOR_OPTIONS[0];
     const logoUnitPrice = hasLogo ? LOGO_SURCHARGE : 0;
 
-    addItem({
+    // ロゴあり & 画像がある場合のみSupabase Storageにアップロード
+    let logoAssetId: string | undefined;
+    if (hasLogo && logoPreviewUrl && logoSourceUrl) {
+      try {
+        // logoCompositeUrl がuseEffect未完了でnullの場合はその場で生成
+        const productImageSrc = getLatteBowlColorDetailImagePath(slug, selectedColorOption, 1);
+        const effectiveCompositeUrl =
+          logoCompositeUrl ??
+          (await captureLogoCompositeImage(productImageSrc, logoPreviewUrl, slug));
+        const { assetId } = await uploadLogoAsset(
+          logoSourceUrl,
+          logoPreviewUrl,
+          effectiveCompositeUrl,
+          { slug, size: selectedSize, colorEn: selectedColorOption },
+        );
+        logoAssetId = assetId;
+      } catch (e) {
+        console.error("Logo upload failed:", e);
+        // アップロード失敗してもカートには追加する（assetIdなしで）
+      }
+    }
+
+    await addItem({
       slug: slug as LatteBowlProductSlug,
       image: getLatteBowlColorDetailImagePath(slug, selectedColorOption),
       name,
@@ -735,12 +771,24 @@ export function ProductDetail({
         lowerHex: colorOptionData.lowerHex,
       },
       hasLogo,
+      variantId: selectedVariantId ?? undefined,
+      logoAssetId,
     });
   };
+
+  const MAX_LOGO_FILE_SIZE = 50 * 1024 * 1024; // 50MB（Supabase free プラン上限）
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_LOGO_FILE_SIZE) {
+      window.alert(
+        "ファイルサイズが大きすぎます。50MB以下のファイルをアップロードしてください。",
+      );
+      e.target.value = "";
+      return;
+    }
 
     try {
       const src = await readFileAsDataUrl(file);
@@ -1180,6 +1228,8 @@ export function ProductDetail({
                       ※ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
                       <br />
                       ※ロゴの転写エリアの実寸最大サイズは幅60mm × 高さ35mmです。
+                      <br />
+                      ※アップロードできるファイルサイズは50MB以下です。
                     </p>
                   </div>
                 )}

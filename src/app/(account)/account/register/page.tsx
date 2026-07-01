@@ -9,14 +9,17 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     if (!email || !password || !confirmPassword) {
-      setError("すべての項目を入力してください。");
+      setError("必須項目をすべて入力してください。");
       return;
     }
     if (password.length < 8) {
@@ -28,7 +31,24 @@ export default function RegisterPage() {
       return;
     }
 
-    router.push(`/account/verify-sent?email=${encodeURIComponent(email)}`);
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, firstName, lastName }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "アカウント作成に失敗しました。");
+        return;
+      }
+      router.push(`/account/verify-sent?email=${encodeURIComponent(email)}`);
+    } catch {
+      setError("通信エラーが発生しました。");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -45,6 +65,33 @@ export default function RegisterPage() {
                 {error}
               </p>
             )}
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs tracking-wide text-muted-foreground">
+                  姓
+                </label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="border border-border bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground/50 focus:border-foreground"
+                  placeholder="山田"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs tracking-wide text-muted-foreground">
+                  名
+                </label>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="border border-border bg-background px-3 py-2.5 text-sm outline-none placeholder:text-muted-foreground/50 focus:border-foreground"
+                  placeholder="太郎"
+                />
+              </div>
+            </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs tracking-wide text-muted-foreground">
@@ -91,9 +138,10 @@ export default function RegisterPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="bg-foreground px-12 py-4 text-sm font-medium text-background transition-opacity hover:opacity-50"
+                disabled={isSubmitting}
+                className="bg-foreground px-12 py-4 text-sm font-medium text-background transition-opacity hover:opacity-50 disabled:opacity-50"
               >
-                新規作成
+                {isSubmitting ? "作成中..." : "新規作成"}
               </button>
             </div>
 

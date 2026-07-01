@@ -2,6 +2,10 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ProductDetail } from "@/components/product/product-detail";
+import { getProductByHandle } from "@/lib/shopify";
+
+// ISR: 1時間ごとにShopify商品データを再検証
+export const revalidate = 3600;
 
 // MVP: 2 products - 温（ON）& 拡（KAKU）
 type StoryImage = {
@@ -257,29 +261,33 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const product = PRODUCTS[slug];
-  if (!product) notFound();
+  const editorial = PRODUCTS[slug];
+  if (!editorial) notFound();
+
+  // Shopify商品データ取得（トークン未設定時はnullにフォールバック）
+  const shopifyProduct = await getProductByHandle(slug).catch(() => null);
 
   return (
     <Suspense>
       <ProductDetail
         slug={slug}
-        name={product.name}
-        nameEn={product.nameEn}
-        capacity={product.capacity}
-        description={product.description}
-        images={product.images}
-        featureImages={product.featureImages}
-        storyLabel={product.storyLabel}
-        storyHeading={product.storyHeading}
-        story={product.story}
-        storyImages={product.storyImages}
-        otherSlug={product.otherSlug}
-        otherName={product.otherName}
-        otherNameEn={product.otherNameEn}
-        otherTagline={product.otherTagline}
-        otherDescription={product.otherDescription}
-        otherImage={product.otherImage}
+        name={editorial.name}
+        nameEn={editorial.nameEn}
+        capacity={editorial.capacity}
+        description={editorial.description}
+        images={editorial.images}
+        featureImages={editorial.featureImages}
+        storyLabel={editorial.storyLabel}
+        storyHeading={editorial.storyHeading}
+        story={editorial.story}
+        storyImages={editorial.storyImages}
+        otherSlug={editorial.otherSlug}
+        otherName={editorial.otherName}
+        otherNameEn={editorial.otherNameEn}
+        otherTagline={editorial.otherTagline}
+        otherDescription={editorial.otherDescription}
+        otherImage={editorial.otherImage}
+        variants={shopifyProduct?.variants}
       />
     </Suspense>
   );
