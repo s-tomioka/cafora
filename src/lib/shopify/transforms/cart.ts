@@ -14,7 +14,7 @@ const ATTR_COLOR_NAME = "color_name";
 const ATTR_COLOR_NAME_EN = "color_name_en";
 const ATTR_COLOR_UPPER_HEX = "color_upper_hex";
 const ATTR_COLOR_LOWER_HEX = "color_lower_hex";
-const ATTR_LOGO_URL = "logo_url";
+const ATTR_LOGO_ASSET_ID = "logo_asset_id";
 const ATTR_HAS_LOGO = "has_logo";
 const ATTR_SLUG = "slug";
 const ATTR_BASE_PRICE = "base_unit_price";
@@ -28,7 +28,7 @@ type BuildCartLineInputPayload = {
   baseUnitPrice: number;
   colorOption: ColorOption | null;
   hasLogo: boolean;
-  logoUrl?: string;
+  logoAssetId?: string;
 };
 
 export function buildCartLineInput(
@@ -42,7 +42,7 @@ export function buildCartLineInput(
     baseUnitPrice,
     colorOption,
     hasLogo,
-    logoUrl,
+    logoAssetId,
   } = payload;
 
   const attributes: ShopifyCartLineAttribute[] = [
@@ -64,9 +64,8 @@ export function buildCartLineInput(
     );
   }
 
-  const SHOPIFY_ATTR_MAX_LENGTH = 255;
-  if (hasLogo && logoUrl && logoUrl.length <= SHOPIFY_ATTR_MAX_LENGTH) {
-    attributes.push({ key: ATTR_LOGO_URL, value: logoUrl });
+  if (hasLogo && logoAssetId) {
+    attributes.push({ key: ATTR_LOGO_ASSET_ID, value: logoAssetId });
   }
 
   return { merchandiseId: variantId, quantity, attributes };
@@ -122,6 +121,8 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
   const image =
     getAttr(attrs, ATTR_IMAGE) ?? FALLBACK_IMAGES[slug] ?? DEFAULT_IMAGE;
 
+  const logoAssetId = getAttr(attrs, ATTR_LOGO_ASSET_ID);
+
   return {
     id: raw.id,
     slug,
@@ -134,6 +135,7 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
     quantity: raw.quantity,
     colorOption,
     hasLogo,
+    ...(logoAssetId ? { logoAssetId } : {}),
   };
 }
 

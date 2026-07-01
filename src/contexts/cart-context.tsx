@@ -2,6 +2,7 @@
 
 import { IS_PRE_OPEN } from "@/constants";
 import type { CartItem, ColorOption, ShopifyCart } from "@/lib/shopify/types";
+import { deleteLogoAsset } from "@/lib/supabase/logo-storage";
 import {
   getCart,
   cartCreate,
@@ -32,7 +33,7 @@ const hasShopifyConfig =
 // ─── コンテキスト型 ───────────────────────────────────────────
 export type AddItemPayload = Omit<CartItem, "id"> & {
   variantId?: string;
-  logoUrl?: string;
+  logoAssetId?: string;
 };
 
 type CartContextType = {
@@ -123,7 +124,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           baseUnitPrice: payload.baseUnitPrice,
           colorOption: payload.colorOption,
           hasLogo: payload.hasLogo,
-          logoUrl: payload.logoUrl,
+          logoAssetId: payload.logoAssetId,
         });
 
         setCartError(null);
@@ -175,6 +176,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // ─── removeItem ──────────────────────────────────────────────
   const removeItem = useCallback(
     async (id: string) => {
+      const logoAssetId = items.find((i) => i.id === id)?.logoAssetId;
       const storedCartId = cartId ?? localStorage.getItem(CART_ID_KEY);
       if (hasShopifyConfig && storedCartId) {
         setIsLoading(true);
@@ -182,6 +184,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           setCartError(null);
           const cart = await cartLinesRemove(storedCartId, [id]);
           applyCart(cart);
+          if (logoAssetId) deleteLogoAsset(logoAssetId).catch(console.error);
         } catch (err) {
           setCartError(err instanceof Error ? err.message : "カートの更新に失敗しました。");
         } finally {
@@ -189,10 +192,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       } else {
         setItems((prev) => prev.filter((item) => item.id !== id));
+        if (logoAssetId) deleteLogoAsset(logoAssetId).catch(console.error);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cartId],
+    [cartId, items],
   );
 
   // ─── updateQuantity ──────────────────────────────────────────

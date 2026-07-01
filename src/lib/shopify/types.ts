@@ -164,6 +164,7 @@ export type CartItem = {
   quantity: number;
   colorOption: ColorOption | null;
   hasLogo: boolean;
+  logoAssetId?: string;
 };
 
 export type AppOrderItem = {
