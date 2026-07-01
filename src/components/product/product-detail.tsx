@@ -608,8 +608,11 @@ export function ProductDetail({
     LATTE_BOWL_COLOR_OPTIONS[0].nameEn,
   );
   const [hasLogo, setHasLogo] = useState(false);
+  const selectedColorName = LATTE_BOWL_COLOR_OPTIONS.find(
+    (o) => o.nameEn === selectedColorOption,
+  )?.name;
   const selectedVariantId = variants
-    ? findVariantId(variants, selectedSize, hasLogo)
+    ? findVariantId(variants, selectedSize, hasLogo, selectedColorName)
     : null;
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [logoSourceUrl, setLogoSourceUrl] = useState<string | null>(null);
