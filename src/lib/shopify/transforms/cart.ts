@@ -9,16 +9,18 @@ import type {
   ShopifyCartLineInput,
 } from "../types";
 
-// Attribute keys stored in Shopify cart line attributes
-const ATTR_COLOR_NAME = "color_name";
-const ATTR_COLOR_NAME_EN = "color_name_en";
-const ATTR_COLOR_UPPER_HEX = "color_upper_hex";
-const ATTR_COLOR_LOWER_HEX = "color_lower_hex";
-const ATTR_LOGO_ASSET_ID = "logo_asset_id";
-const ATTR_HAS_LOGO = "has_logo";
-const ATTR_SLUG = "slug";
-const ATTR_BASE_PRICE = "base_unit_price";
-const ATTR_IMAGE = "image";
+// Attribute keys stored in Shopify cart line attributes.
+// キーを `_` 始まりにすると Shopify のチェックアウト/確認メール/注文ステータス
+// など顧客向け表示から隠れる（管理画面・API では引き続き参照可能）。
+const ATTR_COLOR_NAME = "_color_name";
+const ATTR_COLOR_NAME_EN = "_color_name_en";
+const ATTR_COLOR_UPPER_HEX = "_color_upper_hex";
+const ATTR_COLOR_LOWER_HEX = "_color_lower_hex";
+const ATTR_LOGO_ASSET_ID = "_logo_asset_id";
+const ATTR_HAS_LOGO = "_has_logo";
+const ATTR_SLUG = "_slug";
+const ATTR_BASE_PRICE = "_base_unit_price";
+const ATTR_IMAGE = "_image";
 
 type BuildCartLineInputPayload = {
   variantId: string;
