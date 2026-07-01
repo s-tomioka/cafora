@@ -43,7 +43,7 @@ describe("buildCartLineInput", () => {
     expect(attrs["color_lower_hex"]).toBe("#3A3A3A");
   });
 
-  it("includes logo_url attribute when hasLogo=true and logoUrl is provided", () => {
+  it("includes logo_asset_id attribute when hasLogo=true and logoAssetId is provided", () => {
     const input = buildCartLineInput({
       variantId: "gid://shopify/ProductVariant/102",
       quantity: 30,
@@ -51,14 +51,29 @@ describe("buildCartLineInput", () => {
       baseUnitPrice: 1980,
       colorOption: null,
       hasLogo: true,
-      logoUrl: "https://storage.supabase.co/logos/test.svg",
+      logoAssetId: "1751234567890-a1b2c3d4",
     });
     const attrs = Object.fromEntries(input.attributes.map((a) => [a.key, a.value]));
     expect(attrs["has_logo"]).toBe("true");
-    expect(attrs["logo_url"]).toBe("https://storage.supabase.co/logos/test.svg");
+    expect(attrs["logo_asset_id"]).toBe("1751234567890-a1b2c3d4");
   });
 
-  it("does not include logo_url when hasLogo=false", () => {
+  it("accepts long strings as logo_asset_id (no 255-char limit)", () => {
+    const longId = "a".repeat(300);
+    const input = buildCartLineInput({
+      variantId: "gid://shopify/ProductVariant/102",
+      quantity: 30,
+      slug: "on",
+      baseUnitPrice: 1980,
+      colorOption: null,
+      hasLogo: true,
+      logoAssetId: longId,
+    });
+    const attrs = Object.fromEntries(input.attributes.map((a) => [a.key, a.value]));
+    expect(attrs["logo_asset_id"]).toBe(longId);
+  });
+
+  it("does not include logo_asset_id when hasLogo=false", () => {
     const input = buildCartLineInput({
       variantId: "gid://shopify/ProductVariant/101",
       quantity: 30,
@@ -68,7 +83,7 @@ describe("buildCartLineInput", () => {
       hasLogo: false,
     });
     const keys = input.attributes.map((a) => a.key);
-    expect(keys).not.toContain("logo_url");
+    expect(keys).not.toContain("logo_asset_id");
   });
 
   it("does not include color attributes when colorOption is null", () => {
@@ -108,7 +123,7 @@ const makeMockCartLine = (
     hasLogo: false,
     unitPrice: 2200,
     colorOption: null as typeof COLOR_OPTION | null,
-    logoUrl: null as string | null,
+    logoAssetId: null as string | null,
     ...overrides,
   };
 
@@ -127,8 +142,8 @@ const makeMockCartLine = (
       { key: "color_lower_hex", value: o.colorOption.lowerHex },
     );
   }
-  if (o.hasLogo && o.logoUrl) {
-    attributes.push({ key: "logo_url", value: o.logoUrl });
+  if (o.hasLogo && o.logoAssetId) {
+    attributes.push({ key: "logo_asset_id", value: o.logoAssetId });
   }
 
   return {

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { uploadLogoAsset } from "@/lib/supabase/logo-storage";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -732,6 +733,28 @@ export function ProductDetail({
       ) ?? LATTE_BOWL_COLOR_OPTIONS[0];
     const logoUnitPrice = hasLogo ? LOGO_SURCHARGE : 0;
 
+    // ロゴあり & 画像がある場合のみSupabase Storageにアップロード
+    let logoAssetId: string | undefined;
+    if (hasLogo && logoPreviewUrl && logoSourceUrl) {
+      try {
+        // logoCompositeUrl がuseEffect未完了でnullの場合はその場で生成
+        const productImageSrc = getLatteBowlColorDetailImagePath(slug, selectedColorOption, 1);
+        const effectiveCompositeUrl =
+          logoCompositeUrl ??
+          (await captureLogoCompositeImage(productImageSrc, logoPreviewUrl, slug));
+        const { assetId } = await uploadLogoAsset(
+          logoSourceUrl,
+          logoPreviewUrl,
+          effectiveCompositeUrl,
+          { slug, size: selectedSize, colorEn: selectedColorOption },
+        );
+        logoAssetId = assetId;
+      } catch (e) {
+        console.error("Logo upload failed:", e);
+        // アップロード失敗してもカートには追加する（assetIdなしで）
+      }
+    }
+
     await addItem({
       slug: slug as LatteBowlProductSlug,
       image: getLatteBowlColorDetailImagePath(slug, selectedColorOption),
@@ -749,13 +772,23 @@ export function ProductDetail({
       },
       hasLogo,
       variantId: selectedVariantId ?? undefined,
-      logoUrl: logoPreviewUrl ?? undefined,
+      logoAssetId,
     });
   };
+
+  const MAX_LOGO_FILE_SIZE = 50 * 1024 * 1024; // 50MB（Supabase free プラン上限）
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_LOGO_FILE_SIZE) {
+      window.alert(
+        "ファイルサイズが大きすぎます。50MB以下のファイルをアップロードしてください。",
+      );
+      e.target.value = "";
+      return;
+    }
 
     try {
       const src = await readFileAsDataUrl(file);
@@ -1195,6 +1228,8 @@ export function ProductDetail({
                       ※ロゴデータは複数色あるロゴではなく、1色のロゴのみ転写が可能です。
                       <br />
                       ※ロゴの転写エリアの実寸最大サイズは幅60mm × 高さ35mmです。
+                      <br />
+                      ※アップロードできるファイルサイズは50MB以下です。
                     </p>
                   </div>
                 )}
