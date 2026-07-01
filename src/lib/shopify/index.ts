@@ -65,13 +65,25 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
   return data.cart;
 }
 
+type CartUserError = { message: string };
+
+function throwIfCartErrors(
+  cart: ShopifyCart | null,
+  userErrors: CartUserError[],
+  op: string,
+): ShopifyCart {
+  if (userErrors.length > 0) throw new Error(userErrors[0].message);
+  if (!cart) throw new Error(`${op} returned null cart`);
+  return cart;
+}
+
 export async function cartCreate(
   lines: ShopifyCartLineInput[],
 ): Promise<ShopifyCart> {
   const data = await executeQuery<{
-    cartCreate: { cart: ShopifyCart; userErrors: unknown[] };
+    cartCreate: { cart: ShopifyCart | null; userErrors: CartUserError[] };
   }>(CART_CREATE, { lines });
-  return data.cartCreate.cart;
+  return throwIfCartErrors(data.cartCreate.cart, data.cartCreate.userErrors, "cartCreate");
 }
 
 export async function cartLinesAdd(
@@ -79,9 +91,9 @@ export async function cartLinesAdd(
   lines: ShopifyCartLineInput[],
 ): Promise<ShopifyCart> {
   const data = await executeQuery<{
-    cartLinesAdd: { cart: ShopifyCart; userErrors: unknown[] };
+    cartLinesAdd: { cart: ShopifyCart | null; userErrors: CartUserError[] };
   }>(CART_LINES_ADD, { cartId, lines });
-  return data.cartLinesAdd.cart;
+  return throwIfCartErrors(data.cartLinesAdd.cart, data.cartLinesAdd.userErrors, "cartLinesAdd");
 }
 
 export async function cartLinesUpdate(
@@ -89,9 +101,9 @@ export async function cartLinesUpdate(
   lines: Array<{ id: string; quantity: number }>,
 ): Promise<ShopifyCart> {
   const data = await executeQuery<{
-    cartLinesUpdate: { cart: ShopifyCart; userErrors: unknown[] };
+    cartLinesUpdate: { cart: ShopifyCart | null; userErrors: CartUserError[] };
   }>(CART_LINES_UPDATE, { cartId, lines });
-  return data.cartLinesUpdate.cart;
+  return throwIfCartErrors(data.cartLinesUpdate.cart, data.cartLinesUpdate.userErrors, "cartLinesUpdate");
 }
 
 export async function cartLinesRemove(
@@ -99,9 +111,9 @@ export async function cartLinesRemove(
   lineIds: string[],
 ): Promise<ShopifyCart> {
   const data = await executeQuery<{
-    cartLinesRemove: { cart: ShopifyCart; userErrors: unknown[] };
+    cartLinesRemove: { cart: ShopifyCart | null; userErrors: CartUserError[] };
   }>(CART_LINES_REMOVE, { cartId, lineIds });
-  return data.cartLinesRemove.cart;
+  return throwIfCartErrors(data.cartLinesRemove.cart, data.cartLinesRemove.userErrors, "cartLinesRemove");
 }
 
 // ─── Customer API ─────────────────────────────────────────────────────────────

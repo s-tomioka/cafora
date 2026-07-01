@@ -716,7 +716,7 @@ export function ProductDetail({
   }, [isLogoCropOpen, logoSourceUrl]);
 
   // カートに追加（useCallback を外して常に最新 state を参照）
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (quantity < MIN_ORDER_QUANTITY) {
       setQuantityError(true);
       alertMinOrderQuantity();
@@ -729,7 +729,7 @@ export function ProductDetail({
       ) ?? LATTE_BOWL_COLOR_OPTIONS[0];
     const logoUnitPrice = hasLogo ? LOGO_SURCHARGE : 0;
 
-    addItem({
+    await addItem({
       slug: slug as LatteBowlProductSlug,
       image: getLatteBowlColorDetailImagePath(slug, selectedColorOption),
       name,
@@ -746,6 +746,7 @@ export function ProductDetail({
       },
       hasLogo,
       variantId: selectedVariantId ?? undefined,
+      logoUrl: logoPreviewUrl ?? undefined,
     });
   };
 

@@ -39,6 +39,7 @@ type CartContextType = {
   itemCount: number;
   isDrawerOpen: boolean;
   isLoading: boolean;
+  cartError: string | null;
   checkoutUrl: string | null;
   addItem: (payload: AddItemPayload) => Promise<void>;
   removeItem: (id: string) => Promise<void>;
@@ -54,6 +55,7 @@ const CartContext = createContext<CartContextType>({
   itemCount: 0,
   isDrawerOpen: false,
   isLoading: false,
+  cartError: null,
   checkoutUrl: null,
   addItem: async () => {},
   removeItem: async () => {},
@@ -73,6 +75,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [cartError, setCartError] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [cartId, setCartId] = useState<string | null>(null);
 
@@ -117,6 +120,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           logoUrl: payload.logoUrl,
         });
 
+        setCartError(null);
         let cart: ShopifyCart;
         const stored = localStorage.getItem(CART_ID_KEY);
         if (stored) {
@@ -126,6 +130,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
         applyCart(cart);
         setIsDrawerOpen(true);
+      } catch (err) {
+        setCartError(err instanceof Error ? err.message : "カートの更新に失敗しました。");
       } finally {
         setIsLoading(false);
       }
@@ -160,8 +166,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (hasShopifyConfig && storedCartId) {
         setIsLoading(true);
         try {
+          setCartError(null);
           const cart = await cartLinesRemove(storedCartId, [id]);
           applyCart(cart);
+        } catch (err) {
+          setCartError(err instanceof Error ? err.message : "カートの更新に失敗しました。");
         } finally {
           setIsLoading(false);
         }
@@ -180,8 +189,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (hasShopifyConfig && storedCartId) {
         setIsLoading(true);
         try {
+          setCartError(null);
           const cart = await cartLinesUpdate(storedCartId, [{ id, quantity }]);
           applyCart(cart);
+        } catch (err) {
+          setCartError(err instanceof Error ? err.message : "カートの更新に失敗しました。");
         } finally {
           setIsLoading(false);
         }
@@ -209,6 +221,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         itemCount,
         isDrawerOpen,
         isLoading,
+        cartError,
         checkoutUrl,
         addItem,
         removeItem,

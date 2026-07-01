@@ -21,6 +21,11 @@ export function useCustomer(): CustomerState {
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/me");
+      if (!res.ok) {
+        setCustomer(null);
+        setOrders([]);
+        return;
+      }
       const data = await res.json();
       setCustomer(data.customer ?? null);
       setOrders(data.orders ?? []);
@@ -37,9 +42,11 @@ export function useCustomer(): CustomerState {
   }, [fetchCustomer]);
 
   const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
-    setCustomer(null);
-    setOrders([]);
+    const res = await fetch("/api/auth/logout", { method: "POST" });
+    if (res.ok) {
+      setCustomer(null);
+      setOrders([]);
+    }
   }, []);
 
   return {

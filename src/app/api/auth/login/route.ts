@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { customerAccessTokenCreate } from "@/lib/shopify";
 
 const TOKEN_COOKIE = "shopify_customer_token";
-const COOKIE_MAX_AGE = 60 * 60 * 24 * 30; // 30日
 
 export async function POST(req: NextRequest) {
-  const { email, password } = await req.json();
+  let email: string, password: string;
+  try {
+    ({ email, password } = await req.json());
+  } catch {
+    return NextResponse.json(
+      { error: "リクエストの形式が正しくありません。" },
+      { status: 400 },
+    );
+  }
 
   if (!email || !password) {
     return NextResponse.json(
@@ -23,14 +30,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { accessToken } = result.customerAccessToken;
+  const { accessToken, expiresAt } = result.customerAccessToken;
+  const maxAge = Math.max(
+    0,
+    Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000),
+  );
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set(TOKEN_COOKIE, accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: COOKIE_MAX_AGE,
+    maxAge,
     path: "/",
   });
 

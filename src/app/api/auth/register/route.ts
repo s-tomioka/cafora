@@ -10,7 +10,15 @@ const ERROR_MESSAGES: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
-  const { email, password, firstName, lastName } = await req.json();
+  let email: string, password: string, firstName: string, lastName: string;
+  try {
+    ({ email, password, firstName, lastName } = await req.json());
+  } catch {
+    return NextResponse.json(
+      { error: "リクエストの形式が正しくありません。" },
+      { status: 400 },
+    );
+  }
 
   if (!email || !password) {
     return NextResponse.json(
