@@ -21,7 +21,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await customerAccessTokenCreate(email, password);
+  let result;
+  try {
+    result = await customerAccessTokenCreate(email, password);
+  } catch {
+    return NextResponse.json(
+      { error: "サーバーエラーが発生しました。しばらく後でお試しください。" },
+      { status: 503 },
+    );
+  }
 
   if (result.customerUserErrors.length > 0 || !result.customerAccessToken) {
     return NextResponse.json(
@@ -31,10 +39,12 @@ export async function POST(req: NextRequest) {
   }
 
   const { accessToken, expiresAt } = result.customerAccessToken;
-  const maxAge = Math.max(
-    0,
-    Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000),
-  );
+  const FALLBACK_MAX_AGE = 60 * 60 * 24 * 30;
+  const expiresAtMs = new Date(expiresAt).getTime();
+  const maxAge =
+    Number.isFinite(expiresAtMs) && expiresAtMs > Date.now()
+      ? Math.floor((expiresAtMs - Date.now()) / 1000)
+      : FALLBACK_MAX_AGE;
 
   const res = NextResponse.json({ ok: true });
   res.cookies.set(TOKEN_COOKIE, accessToken, {

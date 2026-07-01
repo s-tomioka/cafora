@@ -171,7 +171,7 @@ export function CartDrawer() {
             >
               カートの確認
             </Link>
-            {checkoutUrl ? (
+            {checkoutUrl?.startsWith("https://") ? (
               <a
                 href={checkoutUrl}
                 onClick={closeDrawer}
@@ -211,7 +211,7 @@ export function CartDrawer() {
                 <div key={item.id} className="px-6 py-5">
                   <div className="flex gap-4">
                     <Link
-                      href={`/products/${item.slug}`}
+                      href={/^[a-z0-9-]+$/.test(item.slug) ? `/products/${item.slug}` : "/products"}
                       onClick={closeDrawer}
                       className="relative size-20 shrink-0 overflow-hidden bg-muted transition-opacity hover:opacity-70"
                     >

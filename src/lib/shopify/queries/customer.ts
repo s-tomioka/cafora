@@ -93,7 +93,6 @@ export const GET_CUSTOMER = `
       firstName
       lastName
       email
-      phone
       orders(first: 20, sortKey: PROCESSED_AT, reverse: true) {
         edges {
           node {

@@ -17,6 +17,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
   ReactNode,
 } from "react";
 
@@ -78,6 +79,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cartError, setCartError] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [cartId, setCartId] = useState<string | null>(null);
+  const isAddingRef = useRef(false);
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -94,12 +96,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!hasShopifyConfig) return;
     const stored = localStorage.getItem(CART_ID_KEY);
     if (!stored) return;
+    setIsLoading(true);
     getCart(stored)
       .then((cart) => {
         if (cart) applyCart(cart);
         else localStorage.removeItem(CART_ID_KEY);
       })
-      .catch(() => localStorage.removeItem(CART_ID_KEY));
+      .catch(() => localStorage.removeItem(CART_ID_KEY))
+      .finally(() => setIsLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -107,6 +111,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItemShopify = useCallback(
     async (payload: AddItemPayload) => {
       if (!payload.variantId) return;
+      if (isAddingRef.current) return;
+      isAddingRef.current = true;
       setIsLoading(true);
       try {
         const lineInput = buildCartLineInput({
@@ -124,7 +130,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
         let cart: ShopifyCart;
         const stored = localStorage.getItem(CART_ID_KEY);
         if (stored) {
-          cart = await cartLinesAdd(stored, [lineInput]);
+          try {
+            cart = await cartLinesAdd(stored, [lineInput]);
+          } catch {
+            // カートが期限切れの可能性 — 新規作成にフォールバック
+            localStorage.removeItem(CART_ID_KEY);
+            cart = await cartCreate([lineInput]);
+          }
         } else {
           cart = await cartCreate([lineInput]);
         }
@@ -133,6 +145,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         setCartError(err instanceof Error ? err.message : "カートの更新に失敗しました。");
       } finally {
+        isAddingRef.current = false;
         setIsLoading(false);
       }
     },
