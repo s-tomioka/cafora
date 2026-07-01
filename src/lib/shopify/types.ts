@@ -119,6 +119,7 @@ export type AppProductVariant = {
   id: string;
   size: string;
   hasLogo: boolean;
+  color: string;
   price: number;
   available: boolean;
 };
