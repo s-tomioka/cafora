@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Serif_JP } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import "./globals.css";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Toaster } from "@/components/ui/sonner";
@@ -11,6 +11,9 @@ import { IS_PRE_OPEN } from "@/constants";
 // 本番のみ計測する。NEXT_PUBLIC_GA_ID は Vercel の Production スコープにのみ登録すること
 // （Preview / ローカルでは未定義になり、GA タグは出力されない）。
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
+// Google Tag Manager コンテナID（全環境で発火。環境の出し分けは GTM 側で管理）
+const GTM_ID = "GTM-TBTLHNHS";
 
 const notoSerifJP = Noto_Serif_JP({
   variable: "--font-sans",
@@ -62,6 +65,15 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <CartProvider>
           <ScrollToTop />
           {children}
@@ -69,6 +81,7 @@ export default function RootLayout({
           <Toaster position="top-right" />
         </CartProvider>
       </body>
+      <GoogleTagManager gtmId={GTM_ID} />
       {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
