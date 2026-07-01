@@ -64,7 +64,8 @@ export function buildCartLineInput(
     );
   }
 
-  if (hasLogo && logoUrl) {
+  const SHOPIFY_ATTR_MAX_LENGTH = 255;
+  if (hasLogo && logoUrl && logoUrl.length <= SHOPIFY_ATTR_MAX_LENGTH) {
     attributes.push({ key: ATTR_LOGO_URL, value: logoUrl });
   }
 
@@ -117,8 +118,9 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
     on: "/images/product/latte-bowl-on.webp",
     kaku: "/images/product/latte-bowl-kaku.webp",
   };
+  const DEFAULT_IMAGE = "/images/product/latte-bowl-on.webp";
   const image =
-    getAttr(attrs, ATTR_IMAGE) ?? FALLBACK_IMAGES[slug] ?? "";
+    getAttr(attrs, ATTR_IMAGE) ?? FALLBACK_IMAGES[slug] ?? DEFAULT_IMAGE;
 
   return {
     id: raw.id,
@@ -126,9 +128,9 @@ export function transformShopifyCartLine(raw: ShopifyCartLine): CartItem {
     image,
     name: raw.merchandise.product.title,
     capacity,
-    baseUnitPrice: baseUnitPrice || pricePerItem - logoUnitPrice,
+    baseUnitPrice: baseUnitPrice !== 0 ? baseUnitPrice : pricePerItem - logoUnitPrice,
     logoUnitPrice,
-    unitPrice: unitPrice || pricePerItem,
+    unitPrice: baseUnitPrice !== 0 ? unitPrice : pricePerItem,
     quantity: raw.quantity,
     colorOption,
     hasLogo,

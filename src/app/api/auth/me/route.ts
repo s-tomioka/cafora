@@ -19,7 +19,15 @@ export async function GET(_req: NextRequest) {
       res.cookies.delete(TOKEN_COOKIE);
       return res;
     }
-    return NextResponse.json({ customer, orders });
+    return NextResponse.json({
+      customer: {
+        id: customer.id,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        email: customer.email,
+      },
+      orders,
+    });
   } catch {
     return NextResponse.json(
       { error: "認証情報の取得に失敗しました。" },

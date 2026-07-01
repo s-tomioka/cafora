@@ -321,7 +321,7 @@ export function CartView() {
           </div>
 
           {/* 購入ボタン: Shopify hosted checkoutへリダイレクト */}
-          {checkoutUrl ? (
+          {checkoutUrl?.startsWith("https://") ? (
             <a
               href={checkoutUrl}
               className="mt-3 inline-block bg-foreground px-16 py-4 text-center text-sm font-medium text-background transition-opacity hover:opacity-50"

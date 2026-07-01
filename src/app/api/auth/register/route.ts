@@ -27,12 +27,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const result = await customerCreate({
-    email,
-    password,
-    firstName: firstName || undefined,
-    lastName: lastName || undefined,
-  });
+  let result;
+  try {
+    result = await customerCreate({
+      email,
+      password,
+      firstName: firstName || undefined,
+      lastName: lastName || undefined,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "サーバーエラーが発生しました。しばらく後でお試しください。" },
+      { status: 503 },
+    );
+  }
 
   if (result.customerUserErrors.length > 0) {
     const code = result.customerUserErrors[0].code;
