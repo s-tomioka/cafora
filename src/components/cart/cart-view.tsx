@@ -89,7 +89,7 @@ function QuantityStepper({
 // ─── メインコンポーネント ─────────────────────────────────
 export function CartView() {
   // CartContext から実際のカートデータを取得
-  const { items, updateQuantity, removeItem } = useCart();
+  const { items, updateQuantity, removeItem, checkoutUrl } = useCart();
   const [showTooltip, setShowTooltip] = useState(false);
 
   const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
@@ -320,10 +320,22 @@ export function CartView() {
             </span>
           </div>
 
-          {/* 購入ボタン */}
-          <button className="mt-3 bg-foreground px-16 py-4 text-sm font-medium text-background transition-opacity hover:opacity-50">
-            購入手続き
-          </button>
+          {/* 購入ボタン: Shopify hosted checkoutへリダイレクト */}
+          {checkoutUrl?.startsWith("https://") ? (
+            <a
+              href={checkoutUrl}
+              className="mt-3 inline-block bg-foreground px-16 py-4 text-center text-sm font-medium text-background transition-opacity hover:opacity-50"
+            >
+              購入手続き
+            </a>
+          ) : (
+            <button
+              disabled
+              className="mt-3 cursor-not-allowed bg-foreground/40 px-16 py-4 text-sm font-medium text-background"
+            >
+              購入手続き
+            </button>
+          )}
         </div>
       </div>
     </div>

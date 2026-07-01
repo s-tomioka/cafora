@@ -5,17 +5,17 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ShoppingBag, User } from "lucide-react";
 import { CaforaLogo } from "@/components/ui/cafora-logo";
-import { IS_PRE_OPEN, PRE_OPEN_SALE_LABEL } from "@/constants";
+import { IS_PRE_OPEN, PRE_OPEN_SALE_LABEL, IS_JOURNAL_ENABLED } from "@/constants";
 import { useCart } from "@/contexts/cart-context";
 
 const NAV_ITEMS = [
   { href: "/products", label: "商品を探す" },
   { href: "/barista", label: "WITH BARISTAS" },
   { href: "/brand", label: "CAFORAについて" },
-  // プレオープン中は非表示（ジャーナル準備中）
-  // { href: "/journal", label: "ジャーナル" },
+  // ジャーナルは公開フラグが true のときのみ表示（microCMS連携後）
+  ...(IS_JOURNAL_ENABLED ? [{ href: "/journal", label: "ジャーナル" }] : []),
   { href: "/faq", label: "よくあるご質問・お問合せ" },
-] as const;
+];
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
